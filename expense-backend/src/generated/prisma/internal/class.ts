@@ -12,7 +12,7 @@
  */
 
 import * as runtime from "@prisma/client/runtime/client"
-import type * as Prisma from "./prismaNamespace.js"
+import type * as Prisma from "./prismaNamespace"
 
 
 const config: runtime.GetPrismaClientConfig = {
@@ -20,7 +20,7 @@ const config: runtime.GetPrismaClientConfig = {
   "clientVersion": "7.1.0",
   "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "postgresql",
-  "inlineSchema": "generator client {\n  provider = \"prisma-client\"\n  // gera o client em src/generated/prisma\n  output   = \"../src/generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  password  String\n  name      String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  expenses         Expense[]\n  categories       Category[]\n  paidInstallments Installment[]\n}\n\nmodel Category {\n  id     Int    @id @default(autoincrement())\n  name   String\n  userId Int\n  user   User   @relation(fields: [userId], references: [id])\n\n  expenses Expense[]\n}\n\nmodel Expense {\n  id               Int      @id @default(autoincrement())\n  date             DateTime\n  description      String\n  location         String?\n  totalAmount      Decimal  @db.Decimal(10, 2)\n  isInstallment    Boolean  @default(false)\n  installmentCount Int      @default(1)\n  isShared         Boolean  @default(false)\n  createdAt        DateTime @default(now())\n  updatedAt        DateTime @updatedAt\n\n  userId     Int\n  user       User     @relation(fields: [userId], references: [id])\n  categoryId Int\n  category   Category @relation(fields: [categoryId], references: [id])\n\n  installments Installment[]\n}\n\nmodel Installment {\n  id     Int       @id @default(autoincrement())\n  number Int\n  amount Decimal   @db.Decimal(10, 2)\n  date   DateTime // competence date\n  status String    @default(\"OPEN\") // OPEN, PAID\n  paidAt DateTime?\n\n  expenseId Int\n  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)\n\n  paidById Int?\n  paidBy   User? @relation(fields: [paidById], references: [id])\n}\n",
+  "inlineSchema": "generator client {\n  provider     = \"prisma-client\"\n  output       = \"../src/generated/prisma\"\n  moduleFormat = \"cjs\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        Int      @id @default(autoincrement())\n  email     String   @unique\n  password  String\n  name      String\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  expenses         Expense[]\n  categories       Category[]\n  paidInstallments Installment[]\n}\n\nmodel Category {\n  id     Int    @id @default(autoincrement())\n  name   String\n  userId Int\n  user   User   @relation(fields: [userId], references: [id])\n\n  expenses Expense[]\n}\n\nmodel Expense {\n  id               Int      @id @default(autoincrement())\n  date             DateTime\n  description      String\n  location         String?\n  totalAmount      Decimal  @db.Decimal(10, 2)\n  isInstallment    Boolean  @default(false)\n  installmentCount Int      @default(1)\n  isShared         Boolean  @default(false)\n  createdAt        DateTime @default(now())\n  updatedAt        DateTime @updatedAt\n\n  userId     Int\n  user       User     @relation(fields: [userId], references: [id])\n  categoryId Int\n  category   Category @relation(fields: [categoryId], references: [id])\n\n  installments Installment[]\n}\n\nmodel Installment {\n  id     Int       @id @default(autoincrement())\n  number Int\n  amount Decimal   @db.Decimal(10, 2)\n  date   DateTime // competence date\n  status String    @default(\"OPEN\") // OPEN, PAID\n  paidAt DateTime?\n\n  expenseId Int\n  expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)\n\n  paidById Int?\n  paidBy   User? @relation(fields: [paidById], references: [id])\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -37,10 +37,10 @@ async function decodeBase64AsWasm(wasmBase64: string): Promise<WebAssembly.Modul
 }
 
 config.compilerWasm = {
-  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.mjs"),
+  getRuntime: async () => await import("@prisma/client/runtime/query_compiler_bg.postgresql.js"),
 
   getQueryCompilerWasmModule: async () => {
-    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.mjs")
+    const { wasm } = await import("@prisma/client/runtime/query_compiler_bg.postgresql.wasm-base64.js")
     return await decodeBase64AsWasm(wasm)
   }
 }
