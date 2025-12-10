@@ -3,26 +3,26 @@
 # ===========================
 FROM node:22-alpine AS builder
 
-# Ajuste de timezone opcional
 ENV TZ=America/Sao_Paulo
 
 WORKDIR /app
 
-# Copia arquivos de dependência
+# Dependências
 COPY package*.json ./
-
-# Se tiver pnpm/yarn é só adaptar o comando aqui
 RUN npm ci
 
-# Copia configs do Prisma
+# Prisma config + schema
 COPY prisma.config.ts ./
 COPY prisma ./prisma
 
-# Copia configs de build do Nest
+# Gera o Prisma Client (src/generated/prisma)
+RUN npx prisma generate
+
+# Configs do Nest
 COPY tsconfig*.json ./
 COPY nest-cli.json ./
 
-# Copia código fonte
+# Código fonte
 COPY src ./src
 
 # Build da aplicação NestJS
@@ -38,23 +38,17 @@ ENV TZ=America/Sao_Paulo
 
 WORKDIR /app
 
-# Copia package.json e lock pra instalar só deps de runtime
 COPY package*.json ./
-
-# Instala apenas dependências necessárias em produção
 RUN npm ci --omit=dev
 
-# Copia Prisma (schema + config)
+# Prisma (schema, config e client gerado)
 COPY prisma.config.ts ./
 COPY prisma ./prisma
+COPY --from=builder /app/src/generated ./src/generated
 
-# Copia build gerado no estágio anterior
+# Código compilado
 COPY --from=builder /app/dist ./dist
 
-# Porta padrão do Nest (ajusta no EasyPanel se usar outra)
 EXPOSE 3000
 
-# Ao subir o container:
-# - roda as migrations em produção
-# - inicia a API
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
