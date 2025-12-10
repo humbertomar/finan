@@ -7,13 +7,17 @@ ENV TZ=America/Sao_Paulo
 
 WORKDIR /app
 
-# Dependências
+# Copia e instala dependências
 COPY package*.json ./
 RUN npm ci
 
-# Prisma config + schema
+# Copia Prisma config + schema
 COPY prisma.config.ts ./
 COPY prisma ./prisma
+
+# Define um DATABASE_URL FAKE só para o prisma generate
+# (não vai conectar em nada, é só pra satisfazer o Prisma 7)
+ENV DATABASE_URL="postgres://postgres:postgres@localhost:5432/dummy_db"
 
 # Gera o Prisma Client (src/generated/prisma)
 RUN npx prisma generate
@@ -38,17 +42,23 @@ ENV TZ=America/Sao_Paulo
 
 WORKDIR /app
 
+# Copia package e instala só deps de produção
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-# Prisma (schema, config e client gerado)
+# Copia Prisma config + schema
 COPY prisma.config.ts ./
 COPY prisma ./prisma
+
+# Copia o client gerado
 COPY --from=builder /app/src/generated ./src/generated
 
-# Código compilado
+# Copia o build compilado
 COPY --from=builder /app/dist ./dist
 
+# Porta padrão do Nest
 EXPOSE 3000
 
+# Em runtime o EasyPanel vai injetar a DATABASE_URL real
+# Aqui rodamos as migrations e depois subimos a API
 CMD ["sh", "-c", "npx prisma migrate deploy && node dist/main.js"]
