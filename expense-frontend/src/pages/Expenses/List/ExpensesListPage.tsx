@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getExpenses, getExpenseById } from '@/api/expenses';
+import { getExpenses, getExpenseById, deleteExpense } from '@/api/expenses';
 import type { Expense } from '@/api/expenses';
 import { getCategories } from '@/api/categories';
 import type { Category } from '@/api/categories';
@@ -15,7 +15,6 @@ import { Plus, Eye, Pencil, Trash2, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/auth/store';
 import { PayInstallmentsModal } from '@/components/PayInstallmentsModal';
-import { deleteExpense } from '@/api/expenses';
 
 export function ExpensesListPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -28,10 +27,12 @@ export function ExpensesListPage() {
     const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
     const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-    const [startDate, setStartDate] = useState<string>(firstDayOfMonth.toISOString().split('T')[0]);
+    const [startDate, setStartDate] = useState<string>(
+        firstDayOfMonth.toISOString().split('T')[0]
+    );
     const [endDate, setEndDate] = useState<string>(lastDayOfMonth.toISOString().split('T')[0]);
 
-    const { user } = useAuthStore();
+    const { user } = useAuthStore(); // agora de fato usado
     const [payModalOpen, setPayModalOpen] = useState(false);
     const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
 
@@ -42,14 +43,14 @@ export function ExpensesListPage() {
             const end = new Date(endDate);
 
             // Calculate all months in the range
-            const monthsToFetch: Array<{ month: string, year: string }> = [];
+            const monthsToFetch: Array<{ month: string; year: string }> = [];
             const current = new Date(start.getFullYear(), start.getMonth(), 1);
             const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
 
             while (current <= endMonth) {
                 monthsToFetch.push({
                     month: (current.getMonth() + 1).toString(),
-                    year: current.getFullYear().toString()
+                    year: current.getFullYear().toString(),
                 });
                 current.setMonth(current.getMonth() + 1);
             }
@@ -59,13 +60,13 @@ export function ExpensesListPage() {
                 getExpenses({
                     month,
                     year,
-                    categoryId: selectedCategory === 'all' ? undefined : selectedCategory
+                    categoryId: selectedCategory === 'all' ? undefined : selectedCategory,
                 })
             );
 
             const [allExpensesArrays, categoriesData] = await Promise.all([
                 Promise.all(allExpensesPromises),
-                getCategories()
+                getCategories(),
             ]);
 
             // Flatten all expenses from different months
@@ -76,7 +77,7 @@ export function ExpensesListPage() {
             const endDateTime = new Date(endDate);
             endDateTime.setHours(23, 59, 59, 999);
 
-            const filteredExpenses = allExpenses.filter(expense => {
+            const filteredExpenses = allExpenses.filter((expense) => {
                 const expenseDate = new Date(expense.date);
                 return expenseDate >= startDateTime && expenseDate <= endDateTime;
             });
@@ -84,7 +85,7 @@ export function ExpensesListPage() {
             setExpenses(filteredExpenses);
             setCategories(categoriesData);
         } catch (error) {
-            console.error("Failed to fetch data", error);
+            console.error('Failed to fetch data', error);
         } finally {
             setIsLoading(false);
         }
@@ -92,10 +93,15 @@ export function ExpensesListPage() {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [startDate, endDate, selectedCategory]);
 
     const handleDelete = async (id: string, description: string) => {
-        if (!confirm(`Tem certeza que deseja excluir a despesa "${description}"? Esta ação não pode ser desfeita.`)) {
+        if (
+            !confirm(
+                `Tem certeza que deseja excluir a despesa "${description}"? Esta ação não pode ser desfeita.`
+            )
+        ) {
             return;
         }
 
@@ -103,7 +109,7 @@ export function ExpensesListPage() {
             await deleteExpense(id);
             fetchData(); // Refresh list
         } catch (error) {
-            console.error("Failed to delete expense", error);
+            console.error('Failed to delete expense', error);
             alert('Erro ao excluir despesa. Tente novamente.');
         }
     };
@@ -119,8 +125,12 @@ export function ExpensesListPage() {
         <div className="space-y-6">
             <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Despesas</h2>
-                    <p className="text-muted-foreground">Gerencie seus gastos e acompanhe o orçamentos.</p>
+                    <h2 className="text-3xl font-bold tracking-tight">
+                        Despesas {user?.name ? `de ${user.name}` : ''}
+                    </h2>
+                    <p className="text-muted-foreground">
+                        Gerencie seus gastos e acompanhe o orçamentos.
+                    </p>
                 </div>
                 <Link to="/expenses/nova">
                     <Button>
@@ -161,8 +171,10 @@ export function ExpensesListPage() {
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="all">Todas as Categorias</SelectItem>
-                                    {categories.map(cat => (
-                                        <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
+                                    {categories.map((cat) => (
+                                        <SelectItem key={cat.id} value={cat.id.toString()}>
+                                            {cat.name}
+                                        </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -176,7 +188,11 @@ export function ExpensesListPage() {
                             onClick={() => {
                                 const now = new Date();
                                 const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-                                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                                const lastDay = new Date(
+                                    now.getFullYear(),
+                                    now.getMonth() + 1,
+                                    0
+                                );
                                 setStartDate(firstDay.toISOString().split('T')[0]);
                                 setEndDate(lastDay.toISOString().split('T')[0]);
                             }}
@@ -188,7 +204,11 @@ export function ExpensesListPage() {
                             size="sm"
                             onClick={() => {
                                 const now = new Date();
-                                const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+                                const firstDay = new Date(
+                                    now.getFullYear(),
+                                    now.getMonth() - 1,
+                                    1
+                                );
                                 const lastDay = new Date(now.getFullYear(), now.getMonth(), 0);
                                 setStartDate(firstDay.toISOString().split('T')[0]);
                                 setEndDate(lastDay.toISOString().split('T')[0]);
@@ -201,8 +221,16 @@ export function ExpensesListPage() {
                             size="sm"
                             onClick={() => {
                                 const now = new Date();
-                                const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-                                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+                                const threeMonthsAgo = new Date(
+                                    now.getFullYear(),
+                                    now.getMonth() - 2,
+                                    1
+                                );
+                                const lastDay = new Date(
+                                    now.getFullYear(),
+                                    now.getMonth() + 1,
+                                    0
+                                );
                                 setStartDate(threeMonthsAgo.toISOString().split('T')[0]);
                                 setEndDate(lastDay.toISOString().split('T')[0]);
                             }}
@@ -242,24 +270,40 @@ export function ExpensesListPage() {
                             <TableBody>
                                 {expenses.length === 0 ? (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
+                                        <TableCell
+                                            colSpan={6}
+                                            className="text-center h-24 text-muted-foreground"
+                                        >
                                             Nenhuma despesa encontrada para este período.
                                         </TableCell>
                                     </TableRow>
                                 ) : (
-                                    expenses.map(expense => (
+                                    expenses.map((expense) => (
                                         <TableRow key={expense.id}>
-                                            <TableCell>{format(new Date(expense.date), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
+                                            <TableCell>
+                                                {format(new Date(expense.date), 'dd/MM/yyyy', {
+                                                    locale: ptBR,
+                                                })}
+                                            </TableCell>
                                             <TableCell>
                                                 <div className="flex items-center gap-2">
                                                     {expense.description}
-                                                    {expense.isShared && <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">Partilhado</span>}
-                                                    {expense.totalInstallments && expense.totalInstallments > 1 && (
-                                                        <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">Parcelado</span>
+                                                    {expense.isShared && (
+                                                        <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">
+                                                            Partilhado
+                                                        </span>
                                                     )}
+                                                    {expense.totalInstallments &&
+                                                        expense.totalInstallments > 1 && (
+                                                            <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
+                                                                Parcelado
+                                                            </span>
+                                                        )}
                                                 </div>
                                             </TableCell>
-                                            <TableCell>{expense.category?.name || '-'}</TableCell>
+                                            <TableCell>
+                                                {expense.category?.name || '-'}
+                                            </TableCell>
                                             <TableCell>{expense.location}</TableCell>
                                             <TableCell className="font-medium text-red-600">
                                                 - R$ {Number(expense.totalAmount).toFixed(2)}
@@ -267,7 +311,11 @@ export function ExpensesListPage() {
                                             <TableCell className="text-right">
                                                 <div className="flex items-center justify-end gap-1">
                                                     <Link to={`/expenses/${expense.id}`}>
-                                                        <Button variant="ghost" size="icon" title="Visualizar">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            title="Visualizar"
+                                                        >
                                                             <Eye className="h-4 w-4" />
                                                         </Button>
                                                     </Link>
@@ -280,7 +328,11 @@ export function ExpensesListPage() {
                                                         <DollarSign className="h-4 w-4 text-green-600" />
                                                     </Button>
                                                     <Link to={`/expenses/${expense.id}/edit`}>
-                                                        <Button variant="ghost" size="icon" title="Editar">
+                                                        <Button
+                                                            variant="ghost"
+                                                            size="icon"
+                                                            title="Editar"
+                                                        >
                                                             <Pencil className="h-4 w-4 text-blue-600" />
                                                         </Button>
                                                     </Link>
@@ -288,7 +340,12 @@ export function ExpensesListPage() {
                                                         variant="ghost"
                                                         size="icon"
                                                         title="Excluir"
-                                                        onClick={() => handleDelete(expense.id, expense.description)}
+                                                        onClick={() =>
+                                                            handleDelete(
+                                                                expense.id,
+                                                                expense.description
+                                                            )
+                                                        }
                                                     >
                                                         <Trash2 className="h-4 w-4 text-red-600" />
                                                     </Button>
