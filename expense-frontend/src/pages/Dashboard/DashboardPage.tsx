@@ -1,317 +1,178 @@
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { getExpenses, getExpenseById } from '@/api/expenses';
-import type { Expense } from '@/api/expenses';
-import { getCategories } from '@/api/categories';
-import type { Category } from '@/api/categories';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { DollarSign, Wallet, TrendingUp, Eye } from 'lucide-react';
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { getDashboardSummary, type DashboardSummary } from '@/api/dashboard';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
-import { Plus, Eye, Pencil, Trash2, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { useAuthStore } from '@/auth/store';
-import { PayInstallmentsModal } from '@/components/PayInstallmentsModal';
-import { deleteExpense } from '@/api/expenses';
 
-export function ExpensesListPage() {
-    const [expenses, setExpenses] = useState<Expense[]>([]);
-    const [categories, setCategories] = useState<Category[]>([]);
+export function DashboardPage() {
+    const [data, setData] = useState<DashboardSummary | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const [selectedCategory, setSelectedCategory] = useState<string>('all');
-
-    // Date range filter - default to current month
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-    const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-
-    const [startDate, setStartDate] = useState<string>(firstDayOfMonth.toISOString().split('T')[0]);
-    const [endDate, setEndDate] = useState<string>(lastDayOfMonth.toISOString().split('T')[0]);
-
-    const { user } = useAuthStore();
-    const [payModalOpen, setPayModalOpen] = useState(false);
-    const [selectedExpense, setSelectedExpense] = useState<Expense | null>(null);
-
-    const fetchData = async () => {
-        setIsLoading(true);
-        try {
-            const start = new Date(startDate);
-            const end = new Date(endDate);
-
-            // Calculate all months in the range
-            const monthsToFetch: Array<{ month: string, year: string }> = [];
-            const current = new Date(start.getFullYear(), start.getMonth(), 1);
-            const endMonth = new Date(end.getFullYear(), end.getMonth(), 1);
-
-            while (current <= endMonth) {
-                monthsToFetch.push({
-                    month: (current.getMonth() + 1).toString(),
-                    year: current.getFullYear().toString()
-                });
-                current.setMonth(current.getMonth() + 1);
-            }
-
-            // Fetch expenses from all months in range
-            const allExpensesPromises = monthsToFetch.map(({ month, year }) =>
-                getExpenses({
-                    month,
-                    year,
-                    categoryId: selectedCategory === 'all' ? undefined : selectedCategory
-                })
-            );
-
-            const [allExpensesArrays, categoriesData] = await Promise.all([
-                Promise.all(allExpensesPromises),
-                getCategories()
-            ]);
-
-            // Flatten all expenses from different months
-            const allExpenses = allExpensesArrays.flat();
-
-            // Filter by exact date range
-            const startDateTime = new Date(startDate);
-            const endDateTime = new Date(endDate);
-            endDateTime.setHours(23, 59, 59, 999);
-
-            const filteredExpenses = allExpenses.filter(expense => {
-                const expenseDate = new Date(expense.date);
-                return expenseDate >= startDateTime && expenseDate <= endDateTime;
-            });
-
-            setExpenses(filteredExpenses);
-            setCategories(categoriesData);
-        } catch (error) {
-            console.error("Failed to fetch data", error);
-        } finally {
-            setIsLoading(false);
-        }
-    };
 
     useEffect(() => {
-        fetchData();
-    }, [startDate, endDate, selectedCategory]);
+        const fetchDashboard = async () => {
+            try {
+                const summary = await getDashboardSummary();
+                setData(summary);
+            } catch (error) {
+                console.error('Failed to fetch dashboard data', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
 
-    const handleDelete = async (id: string, description: string) => {
-        if (!confirm(`Tem certeza que deseja excluir a despesa "${description}"? Esta ação não pode ser desfeita.`)) {
-            return;
-        }
+        fetchDashboard();
+    }, []);
 
-        try {
-            await deleteExpense(id);
-            fetchData(); // Refresh list
-        } catch (error) {
-            console.error("Failed to delete expense", error);
-            alert('Erro ao excluir despesa. Tente novamente.');
-        }
-    };
+    if (isLoading) {
+        return (
+            <div className="flex h-full items-center justify-center">
+                Carregando dashboard...
+            </div>
+        );
+    }
 
-    const handlePayClick = async (expense: Expense) => {
-        // Fetch full expense details with installments
-        const fullExpense = await getExpenseById(expense.id);
-        setSelectedExpense(fullExpense);
-        setPayModalOpen(true);
-    };
+    if (!data) return null;
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-                <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Despesas</h2>
-                    <p className="text-muted-foreground">Gerencie seus gastos e acompanhe o orçamentos.</p>
-                </div>
-                <Link to="/expenses/nova">
-                    <Button>
-                        <Plus className="mr-2 h-4 w-4" />
-                        Nova Despesa
-                    </Button>
-                </Link>
+            {/* Cards superiores */}
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Despesas deste Mês</CardTitle>
+                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            R$ {data.currentMonthTotal.toFixed(2)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">
+                            Total de despesas cadastradas
+                        </p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Parcelas deste Mês</CardTitle>
+                        <Wallet className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            R$ {data.currentMonthInstallments.toFixed(2)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">A pagar neste mês</p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Próximo Mês</CardTitle>
+                        <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold">
+                            R$ {data.nextMonthInstallments.toFixed(2)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Parcelas comprometidas</p>
+                    </CardContent>
+                </Card>
             </div>
 
-            <Card>
-                <CardHeader>
-                    <CardTitle>Filtros</CardTitle>
-                    <CardDescription>Filtre suas despesas por período e categoria</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                        <div className="grid gap-2 flex-1">
-                            <Label>Data Inicial</Label>
-                            <Input
-                                type="date"
-                                value={startDate}
-                                onChange={(e) => setStartDate(e.target.value)}
-                            />
-                        </div>
-                        <div className="grid gap-2 flex-1">
-                            <Label>Data Final</Label>
-                            <Input
-                                type="date"
-                                value={endDate}
-                                onChange={(e) => setEndDate(e.target.value)}
-                            />
-                        </div>
-                        <div className="grid gap-2 flex-1 w-full sm:max-w-xs">
-                            <Label>Categoria</Label>
-                            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-                                <SelectTrigger className="bg-background">
-                                    <SelectValue placeholder="Categoria" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="all">Todas as Categorias</SelectItem>
-                                    {categories.map(cat => (
-                                        <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-                    </div>
+            {/* Gráfico + lista de recentes */}
+            <div className="grid gap-4 md:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Distribuição por Categoria</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        {data.categoryDistribution.length > 0 ? (
+                            <ResponsiveContainer width="100%" height={300}>
+                                <PieChart>
+                                    <Pie
+                                        data={data.categoryDistribution}
+                                        cx="50%"
+                                        cy="50%"
+                                        labelLine={false}
+                                        label={({ name, percent }) => {
+                                            const p = percent ?? 0; // evita TS: possibly undefined
+                                            return `${name}: ${(p * 100).toFixed(0)}%`;
+                                        }}
+                                        outerRadius={80}
+                                        fill="#8884d8"
+                                        dataKey="value"
+                                    >
+                                        {data.categoryDistribution.map((entry, index) => (
+                                            <Cell
+                                                key={`cell-${index}`}
+                                                fill={entry.color}
+                                            />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip
+                                        formatter={(value: number) =>
+                                            `R$ ${value.toFixed(2)}`
+                                        }
+                                    />
+                                    <Legend />
+                                </PieChart>
+                            </ResponsiveContainer>
+                        ) : (
+                            <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+                                Nenhuma despesa cadastrada neste mês
+                            </div>
+                        )}
+                    </CardContent>
+                </Card>
 
-                    <div className="flex flex-wrap gap-2">
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const now = new Date();
-                                const firstDay = new Date(now.getFullYear(), now.getMonth(), 1);
-                                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                                setStartDate(firstDay.toISOString().split('T')[0]);
-                                setEndDate(lastDay.toISOString().split('T')[0]);
-                            }}
-                        >
-                            Este Mês
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const now = new Date();
-                                const firstDay = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-                                const lastDay = new Date(now.getFullYear(), now.getMonth(), 0);
-                                setStartDate(firstDay.toISOString().split('T')[0]);
-                                setEndDate(lastDay.toISOString().split('T')[0]);
-                            }}
-                        >
-                            Mês Passado
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const now = new Date();
-                                const threeMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 2, 1);
-                                const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
-                                setStartDate(threeMonthsAgo.toISOString().split('T')[0]);
-                                setEndDate(lastDay.toISOString().split('T')[0]);
-                            }}
-                        >
-                            Últimos 3 Meses
-                        </Button>
-                        <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => {
-                                const now = new Date();
-                                const firstDay = new Date(now.getFullYear(), 0, 1);
-                                const lastDay = new Date(now.getFullYear(), 11, 31);
-                                setStartDate(firstDay.toISOString().split('T')[0]);
-                                setEndDate(lastDay.toISOString().split('T')[0]);
-                            }}
-                        >
-                            Este Ano
-                        </Button>
-                    </div>
-                </CardContent>
-                <CardContent>
-                    {isLoading ? (
-                        <div className="py-8 text-center text-muted-foreground">Carregando...</div>
-                    ) : (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Data</TableHead>
-                                    <TableHead>Descrição</TableHead>
-                                    <TableHead>Categoria</TableHead>
-                                    <TableHead>Local</TableHead>
-                                    <TableHead>Valor</TableHead>
-                                    <TableHead className="text-right">Ações</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {expenses.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={6} className="text-center h-24 text-muted-foreground">
-                                            Nenhuma despesa encontrada para este período.
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    expenses.map(expense => (
-                                        <TableRow key={expense.id}>
-                                            <TableCell>{format(new Date(expense.date), 'dd/MM/yyyy', { locale: ptBR })}</TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    {expense.description}
-                                                    {expense.isShared && <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">Partilhado</span>}
-                                                    {expense.totalInstallments && expense.totalInstallments > 1 && (
-                                                        <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">Parcelado</span>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>{expense.category?.name || '-'}</TableCell>
-                                            <TableCell>{expense.location}</TableCell>
-                                            <TableCell className="font-medium text-red-600">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Despesas Recentes</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="space-y-4">
+                            {data.recentExpenses.length > 0 ? (
+                                data.recentExpenses.map((expense) => (
+                                    <div
+                                        key={expense.id}
+                                        className="flex items-center justify-between"
+                                    >
+                                        <div className="space-y-1">
+                                            <p className="text-sm font-medium leading-none">
+                                                {expense.description}
+                                            </p>
+                                            <p className="text-sm text-muted-foreground">
+                                                {format(
+                                                    new Date(expense.date),
+                                                    "dd 'de' MMMM",
+                                                    { locale: ptBR }
+                                                )}
+                                            </p>
+                                        </div>
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm font-medium text-red-600">
                                                 - R$ {Number(expense.totalAmount).toFixed(2)}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <Link to={`/expenses/${expense.id}`}>
-                                                        <Button variant="ghost" size="icon" title="Visualizar">
-                                                            <Eye className="h-4 w-4" />
-                                                        </Button>
-                                                    </Link>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        title="Pagar parcelas"
-                                                        onClick={() => handlePayClick(expense)}
-                                                    >
-                                                        <DollarSign className="h-4 w-4 text-green-600" />
-                                                    </Button>
-                                                    <Link to={`/expenses/${expense.id}/edit`}>
-                                                        <Button variant="ghost" size="icon" title="Editar">
-                                                            <Pencil className="h-4 w-4 text-blue-600" />
-                                                        </Button>
-                                                    </Link>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        title="Excluir"
-                                                        onClick={() => handleDelete(expense.id, expense.description)}
-                                                    >
-                                                        <Trash2 className="h-4 w-4 text-red-600" />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
-                    )}
-                </CardContent>
-            </Card>
-
-            <PayInstallmentsModal
-                expense={selectedExpense}
-                open={payModalOpen}
-                onOpenChange={setPayModalOpen}
-                onSuccess={() => {
-                    fetchData();
-                    setPayModalOpen(false);
-                }}
-            />
+                                            </span>
+                                            <Link to={`/expenses/${expense.id}`}>
+                                                <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="flex h-[200px] items-center justify-center text-muted-foreground">
+                                    Nenhuma despesa recente
+                                </div>
+                            )}
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     );
 }
+
+export default DashboardPage;
