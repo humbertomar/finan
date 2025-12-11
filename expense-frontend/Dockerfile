@@ -40,7 +40,7 @@ RUN npm install -g serve
 COPY --from=builder /app/dist ./dist
 
 # Porta onde o serve vai rodar
-EXPOSE 4173
+EXPOSE 80
 
-# Sobe o front em modo estático
-CMD ["serve", "-s", "dist", "-l", "4173", "--single"]
+# Sobe o front em modo estático na porta 80
+CMD ["serve", "-s", "dist", "-l", "80", "--single"]
