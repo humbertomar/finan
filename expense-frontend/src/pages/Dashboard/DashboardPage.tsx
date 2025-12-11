@@ -6,6 +6,7 @@ import { getDashboardSummary, type DashboardSummary } from '@/api/dashboard';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
+import { formatCurrency } from '@/utils/currency';
 
 export function DashboardPage() {
     const [data, setData] = useState<DashboardSummary | null>(null);
@@ -37,17 +38,17 @@ export function DashboardPage() {
     if (!data) return null;
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
             {/* Cards superiores */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Despesas deste Mês</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
-                            R$ {data.currentMonthTotal.toFixed(2)}
+                        <div className="text-xl md:text-2xl font-bold">
+                            {formatCurrency(data.currentMonthTotal)}
                         </div>
                         <p className="text-xs text-muted-foreground">
                             Total de despesas cadastradas
@@ -61,8 +62,8 @@ export function DashboardPage() {
                         <Wallet className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
-                            R$ {data.currentMonthInstallments.toFixed(2)}
+                        <div className="text-xl md:text-2xl font-bold">
+                            {formatCurrency(data.currentMonthInstallments)}
                         </div>
                         <p className="text-xs text-muted-foreground">A pagar neste mês</p>
                     </CardContent>
@@ -74,8 +75,8 @@ export function DashboardPage() {
                         <TrendingUp className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-2xl font-bold">
-                            R$ {data.nextMonthInstallments.toFixed(2)}
+                        <div className="text-xl md:text-2xl font-bold">
+                            {formatCurrency(data.nextMonthInstallments)}
                         </div>
                         <p className="text-xs text-muted-foreground">Parcelas comprometidas</p>
                     </CardContent>
@@ -83,14 +84,14 @@ export function DashboardPage() {
             </div>
 
             {/* Gráfico + lista de recentes */}
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className="grid gap-3 md:gap-4 grid-cols-1 lg:grid-cols-2">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Distribuição por Categoria</CardTitle>
+                        <CardTitle className="text-base md:text-lg">Distribuição por Categoria</CardTitle>
                     </CardHeader>
                     <CardContent>
                         {data.categoryDistribution.length > 0 ? (
-                            <ResponsiveContainer width="100%" height={300}>
+                            <ResponsiveContainer width="100%" height={250} className="md:h-[300px]">
                                 <PieChart>
                                     <Pie
                                         data={data.categoryDistribution}
@@ -98,7 +99,7 @@ export function DashboardPage() {
                                         cy="50%"
                                         labelLine={false}
                                         label={({ name, percent }) => {
-                                            const p = percent ?? 0; // evita TS: possibly undefined
+                                            const p = percent ?? 0;
                                             return `${name}: ${(p * 100).toFixed(0)}%`;
                                         }}
                                         outerRadius={80}
@@ -114,14 +115,14 @@ export function DashboardPage() {
                                     </Pie>
                                     <Tooltip
                                         formatter={(value: number) =>
-                                            `R$ ${value.toFixed(2)}`
+                                            formatCurrency(value)
                                         }
                                     />
                                     <Legend />
                                 </PieChart>
                             </ResponsiveContainer>
                         ) : (
-                            <div className="flex h-[300px] items-center justify-center text-muted-foreground">
+                            <div className="flex h-[250px] md:h-[300px] items-center justify-center text-muted-foreground text-sm">
                                 Nenhuma despesa cadastrada neste mês
                             </div>
                         )}
@@ -130,21 +131,21 @@ export function DashboardPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Despesas Recentes</CardTitle>
+                        <CardTitle className="text-base md:text-lg">Despesas Recentes</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="space-y-4">
+                        <div className="space-y-3 md:space-y-4 max-h-[250px] md:max-h-[300px] overflow-y-auto">
                             {data.recentExpenses.length > 0 ? (
                                 data.recentExpenses.map((expense) => (
                                     <div
                                         key={expense.id}
-                                        className="flex items-center justify-between"
+                                        className="flex items-center justify-between gap-2"
                                     >
-                                        <div className="space-y-1">
-                                            <p className="text-sm font-medium leading-none">
+                                        <div className="space-y-1 min-w-0 flex-1">
+                                            <p className="text-sm font-medium leading-none truncate">
                                                 {expense.description}
                                             </p>
-                                            <p className="text-sm text-muted-foreground">
+                                            <p className="text-xs md:text-sm text-muted-foreground">
                                                 {format(
                                                     new Date(expense.date),
                                                     "dd 'de' MMMM",
@@ -152,9 +153,9 @@ export function DashboardPage() {
                                                 )}
                                             </p>
                                         </div>
-                                        <div className="flex items-center gap-2">
-                                            <span className="text-sm font-medium text-red-600">
-                                                - R$ {Number(expense.totalAmount).toFixed(2)}
+                                        <div className="flex items-center gap-2 flex-shrink-0">
+                                            <span className="text-sm font-medium text-red-600 whitespace-nowrap">
+                                                {formatCurrency(Number(expense.totalAmount))}
                                             </span>
                                             <Link to={`/expenses/${expense.id}`}>
                                                 <Eye className="h-4 w-4 text-muted-foreground hover:text-foreground" />
@@ -163,7 +164,7 @@ export function DashboardPage() {
                                     </div>
                                 ))
                             ) : (
-                                <div className="flex h-[200px] items-center justify-center text-muted-foreground">
+                                <div className="flex h-[200px] items-center justify-center text-muted-foreground text-sm">
                                     Nenhuma despesa recente
                                 </div>
                             )}

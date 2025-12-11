@@ -58,13 +58,13 @@ export function CategoriesPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex items-center justify-between">
+        <div className="space-y-4 md:space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">Categorias</h2>
-                    <p className="text-muted-foreground">Gerencie as categorias das suas despesas.</p>
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">Categorias</h2>
+                    <p className="text-sm md:text-base text-muted-foreground">Gerencie as categorias das suas despesas.</p>
                 </div>
-                <Button onClick={handleCreate}>
+                <Button onClick={handleCreate} className="w-full sm:w-auto min-h-[44px]">
                     <Plus className="mr-2 h-4 w-4" />
                     Nova Categoria
                 </Button>
@@ -80,40 +80,65 @@ export function CategoriesPage() {
                         <div className="flex justify-center p-8">
                             <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
                         </div>
+                    ) : categories.length === 0 ? (
+                        <div className="text-center py-12 text-muted-foreground text-sm md:text-base">
+                            Nenhuma categoria encontrada.
+                        </div>
                     ) : (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Nome</TableHead>
-                                    <TableHead className="w-[100px] text-right">Ações</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {categories.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell colSpan={2} className="text-center text-muted-foreground h-24">
-                                            Nenhuma categoria encontrada.
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    categories.map((category) => (
-                                        <TableRow key={category.id}>
-                                            <TableCell className="font-medium">{category.name}</TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex justify-end gap-2">
-                                                    <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
-                                                        <Pencil className="h-4 w-4" />
-                                                    </Button>
-                                                    <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(category.id)}>
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
+                        <>
+                            {/* Mobile: Cards */}
+                            <div className="md:hidden space-y-3">
+                                {categories.map((category) => (
+                                    <Card key={category.id} className="border-l-4 border-l-primary">
+                                        <CardContent className="p-4 flex items-center justify-between">
+                                            <span className="font-medium text-base">{category.name}</span>
+                                            <div className="flex gap-2">
+                                                <Button variant="outline" size="sm" onClick={() => handleEdit(category)}>
+                                                    <Pencil className="h-4 w-4" />
+                                                </Button>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    className="text-destructive hover:text-destructive"
+                                                    onClick={() => handleDelete(category.id)}
+                                                >
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+
+                            {/* Desktop: Table */}
+                            <div className="hidden md:block">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Nome</TableHead>
+                                            <TableHead className="w-[100px] text-right">Ações</TableHead>
                                         </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {categories.map((category) => (
+                                            <TableRow key={category.id}>
+                                                <TableCell className="font-medium">{category.name}</TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex justify-end gap-2">
+                                                        <Button variant="ghost" size="icon" onClick={() => handleEdit(category)}>
+                                                            <Pencil className="h-4 w-4" />
+                                                        </Button>
+                                                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDelete(category.id)}>
+                                                            <Trash2 className="h-4 w-4" />
+                                                        </Button>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </>
                     )}
                 </CardContent>
             </Card>

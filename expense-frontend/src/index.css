@@ -1,1 +1,30 @@
 @import "tailwindcss";
+
+/* Mobile-first global styles */
+@layer base {
+    html {
+        font-size: 16px;
+        -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+        @apply antialiased;
+    }
+
+    /* Ensure minimum touch target sizes on mobile */
+    button,
+    a,
+    input,
+    select,
+    textarea {
+        @apply touch-manipulation;
+    }
+}
+
+@layer utilities {
+    /* Minimum touch target utility */
+    .touch-target {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}

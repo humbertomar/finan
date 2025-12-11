@@ -15,6 +15,7 @@ import { Plus, Eye, Pencil, Trash2, DollarSign } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '@/auth/store';
 import { PayInstallmentsModal } from '@/components/PayInstallmentsModal';
+import { formatCurrency } from '@/utils/currency';
 
 export function ExpensesListPage() {
     const [expenses, setExpenses] = useState<Expense[]>([]);
@@ -122,18 +123,18 @@ export function ExpensesListPage() {
     };
 
     return (
-        <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div className="space-y-4 md:space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 md:gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold tracking-tight">
+                    <h2 className="text-2xl md:text-3xl font-bold tracking-tight">
                         Despesas {user?.name ? `de ${user.name}` : ''}
                     </h2>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm md:text-base text-muted-foreground">
                         Gerencie seus gastos e acompanhe o orçamentos.
                     </p>
                 </div>
-                <Link to="/expenses/nova">
-                    <Button>
+                <Link to="/expenses/nova" className="w-full sm:w-auto">
+                    <Button className="w-full sm:w-auto min-h-[44px]">
                         <Plus className="mr-2 h-4 w-4" />
                         Nova Despesa
                     </Button>
@@ -255,107 +256,179 @@ export function ExpensesListPage() {
                 <CardContent>
                     {isLoading ? (
                         <div className="py-8 text-center text-muted-foreground">Carregando...</div>
+                    ) : expenses.length === 0 ? (
+                        <div className="py-12 text-center text-muted-foreground">
+                            Nenhuma despesa encontrada para este período.
+                        </div>
                     ) : (
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Data</TableHead>
-                                    <TableHead>Descrição</TableHead>
-                                    <TableHead>Categoria</TableHead>
-                                    <TableHead>Local</TableHead>
-                                    <TableHead>Valor</TableHead>
-                                    <TableHead className="text-right">Ações</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {expenses.length === 0 ? (
-                                    <TableRow>
-                                        <TableCell
-                                            colSpan={6}
-                                            className="text-center h-24 text-muted-foreground"
-                                        >
-                                            Nenhuma despesa encontrada para este período.
-                                        </TableCell>
-                                    </TableRow>
-                                ) : (
-                                    expenses.map((expense) => (
-                                        <TableRow key={expense.id}>
-                                            <TableCell>
-                                                {format(new Date(expense.date), 'dd/MM/yyyy', {
-                                                    locale: ptBR,
-                                                })}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="flex items-center gap-2">
-                                                    {expense.description}
-                                                    {expense.isShared && (
-                                                        <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">
-                                                            Partilhado
-                                                        </span>
-                                                    )}
-                                                    {expense.totalInstallments &&
-                                                        expense.totalInstallments > 1 && (
-                                                            <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
-                                                                Parcelado
+                        <>
+                            {/* Mobile: Cards */}
+                            <div className="md:hidden space-y-3">
+                                {expenses.map((expense) => (
+                                    <Card key={expense.id} className="border-l-4 border-l-primary">
+                                        <CardContent className="p-4 space-y-3">
+                                            <div className="flex items-start justify-between gap-2">
+                                                <div className="flex-1 min-w-0">
+                                                    <h3 className="font-semibold truncate">
+                                                        {expense.description}
+                                                    </h3>
+                                                    <p className="text-sm text-muted-foreground">
+                                                        {format(new Date(expense.date), 'dd/MM/yyyy', {
+                                                            locale: ptBR,
+                                                        })}
+                                                    </p>
+                                                </div>
+                                                <div className="text-right flex-shrink-0">
+                                                    <p className="font-bold text-red-600 whitespace-nowrap">
+                                                        {formatCurrency(Number(expense.totalAmount))}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex flex-wrap gap-2 text-xs">
+                                                <span className="bg-muted px-2 py-1 rounded">
+                                                    {expense.category?.name || 'Sem categoria'}
+                                                </span>
+                                                <span className="bg-muted px-2 py-1 rounded">
+                                                    {expense.location}
+                                                </span>
+                                                {expense.isShared && (
+                                                    <span className="bg-blue-100 text-blue-800 px-2 py-1 rounded">
+                                                        Partilhado
+                                                    </span>
+                                                )}
+                                                {expense.totalInstallments && expense.totalInstallments > 1 && (
+                                                    <span className="bg-purple-100 text-purple-800 px-2 py-1 rounded">
+                                                        Parcelado
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            <div className="flex gap-2 pt-2">
+                                                <Link to={`/expenses/${expense.id}`} className="flex-1">
+                                                    <Button variant="outline" size="sm" className="w-full">
+                                                        <Eye className="mr-2 h-4 w-4" />
+                                                        Ver
+                                                    </Button>
+                                                </Link>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => handlePayClick(expense)}
+                                                >
+                                                    <DollarSign className="h-4 w-4 text-green-600" />
+                                                </Button>
+                                                <Link to={`/expenses/${expense.id}/edit`}>
+                                                    <Button variant="outline" size="sm">
+                                                        <Pencil className="h-4 w-4 text-blue-600" />
+                                                    </Button>
+                                                </Link>
+                                                <Button
+                                                    variant="outline"
+                                                    size="sm"
+                                                    onClick={() => handleDelete(expense.id, expense.description)}
+                                                >
+                                                    <Trash2 className="h-4 w-4 text-red-600" />
+                                                </Button>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
+                                ))}
+                            </div>
+
+                            {/* Desktop: Table */}
+                            <div className="hidden md:block overflow-x-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Data</TableHead>
+                                            <TableHead>Descrição</TableHead>
+                                            <TableHead>Categoria</TableHead>
+                                            <TableHead>Local</TableHead>
+                                            <TableHead>Valor</TableHead>
+                                            <TableHead className="text-right">Ações</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {expenses.map((expense) => (
+                                            <TableRow key={expense.id}>
+                                                <TableCell>
+                                                    {format(new Date(expense.date), 'dd/MM/yyyy', {
+                                                        locale: ptBR,
+                                                    })}
+                                                </TableCell>
+                                                <TableCell>
+                                                    <div className="flex items-center gap-2">
+                                                        {expense.description}
+                                                        {expense.isShared && (
+                                                            <span className="text-xs bg-blue-100 text-blue-800 px-1.5 py-0.5 rounded-full">
+                                                                Partilhado
                                                             </span>
                                                         )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell>
-                                                {expense.category?.name || '-'}
-                                            </TableCell>
-                                            <TableCell>{expense.location}</TableCell>
-                                            <TableCell className="font-medium text-red-600">
-                                                - R$ {Number(expense.totalAmount).toFixed(2)}
-                                            </TableCell>
-                                            <TableCell className="text-right">
-                                                <div className="flex items-center justify-end gap-1">
-                                                    <Link to={`/expenses/${expense.id}`}>
+                                                        {expense.totalInstallments &&
+                                                            expense.totalInstallments > 1 && (
+                                                                <span className="text-xs bg-purple-100 text-purple-800 px-1.5 py-0.5 rounded-full">
+                                                                    Parcelado
+                                                                </span>
+                                                            )}
+                                                    </div>
+                                                </TableCell>
+                                                <TableCell>
+                                                    {expense.category?.name || '-'}
+                                                </TableCell>
+                                                <TableCell>{expense.location}</TableCell>
+                                                <TableCell className="font-medium text-red-600">
+                                                    {formatCurrency(Number(expense.totalAmount))}
+                                                </TableCell>
+                                                <TableCell className="text-right">
+                                                    <div className="flex items-center justify-end gap-1">
+                                                        <Link to={`/expenses/${expense.id}`}>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                title="Visualizar"
+                                                            >
+                                                                <Eye className="h-4 w-4" />
+                                                            </Button>
+                                                        </Link>
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            title="Visualizar"
+                                                            title="Pagar parcelas"
+                                                            onClick={() => handlePayClick(expense)}
                                                         >
-                                                            <Eye className="h-4 w-4" />
+                                                            <DollarSign className="h-4 w-4 text-green-600" />
                                                         </Button>
-                                                    </Link>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        title="Pagar parcelas"
-                                                        onClick={() => handlePayClick(expense)}
-                                                    >
-                                                        <DollarSign className="h-4 w-4 text-green-600" />
-                                                    </Button>
-                                                    <Link to={`/expenses/${expense.id}/edit`}>
+                                                        <Link to={`/expenses/${expense.id}/edit`}>
+                                                            <Button
+                                                                variant="ghost"
+                                                                size="icon"
+                                                                title="Editar"
+                                                            >
+                                                                <Pencil className="h-4 w-4 text-blue-600" />
+                                                            </Button>
+                                                        </Link>
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            title="Editar"
+                                                            title="Excluir"
+                                                            onClick={() =>
+                                                                handleDelete(
+                                                                    expense.id,
+                                                                    expense.description
+                                                                )
+                                                            }
                                                         >
-                                                            <Pencil className="h-4 w-4 text-blue-600" />
+                                                            <Trash2 className="h-4 w-4 text-red-600" />
                                                         </Button>
-                                                    </Link>
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="icon"
-                                                        title="Excluir"
-                                                        onClick={() =>
-                                                            handleDelete(
-                                                                expense.id,
-                                                                expense.description
-                                                            )
-                                                        }
-                                                    >
-                                                        <Trash2 className="h-4 w-4 text-red-600" />
-                                                    </Button>
-                                                </div>
-                                            </TableCell>
-                                        </TableRow>
-                                    ))
-                                )}
-                            </TableBody>
-                        </Table>
+                                                    </div>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        </>
                     )}
                 </CardContent>
             </Card>

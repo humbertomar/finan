@@ -58,13 +58,13 @@ export function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center px-4">
+        <div className="min-h-screen w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 flex items-center justify-center p-4">
             <Card className="w-full max-w-md bg-white shadow-2xl border border-slate-100">
                 <CardHeader className="space-y-1 text-center">
-                    <CardTitle className="text-2xl font-semibold text-slate-900">
+                    <CardTitle className="text-xl md:text-2xl font-semibold text-slate-900">
                         Login
                     </CardTitle>
-                    <CardDescription className="text-slate-500">
+                    <CardDescription className="text-sm md:text-base text-slate-500">
                         Entre com suas credenciais para acessar o sistema
                     </CardDescription>
                 </CardHeader>
@@ -111,7 +111,7 @@ export function LoginPage() {
                             </div>
                         )}
 
-                        <Button type="submit" className="w-full" disabled={isLoading}>
+                        <Button type="submit" className="w-full min-h-[44px]" disabled={isLoading}>
                             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                             Entrar
                         </Button>
@@ -130,11 +130,11 @@ export function LoginPage() {
                         </div>
                     </div>
 
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2 w-full">
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full"
+                            className="w-full min-h-[44px]"
                             onClick={fillCredentialsBetim}
                         >
                             Entrar como Betim
@@ -142,7 +142,7 @@ export function LoginPage() {
                         <Button
                             type="button"
                             variant="outline"
-                            className="w-full"
+                            className="w-full min-h-[44px]"
                             onClick={fillCredentialsLidy}
                         >
                             Entrar como Lidy
