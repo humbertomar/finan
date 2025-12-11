@@ -12,7 +12,7 @@ COPY package*.json ./
 RUN npm ci
 
 # Copia Prisma config + schema
-COPY prisma.config.ts ./
+COPY prisma.config.js ./
 COPY prisma ./prisma
 
 # Define um DATABASE_URL FAKE só para o prisma generate
