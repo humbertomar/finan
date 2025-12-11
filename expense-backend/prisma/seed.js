@@ -1,17 +1,11 @@
-import pkg from '@prisma/client';
-import { Pool } from 'pg';
+import { PrismaClient } from '../generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcrypt';
 
-const { PrismaClient } = pkg;
-
-// Pool para o adapter PG (mesma URL do PrismaConfig)
-const pool = new Pool({
+// Mesmo adapter que você usa no PrismaService
+const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
 });
-
-// Adapter do Prisma 7
-const adapter = new PrismaPg(pool);
 
 // Instância do Prisma usando o adapter
 const prisma = new PrismaClient({ adapter });
@@ -52,5 +46,4 @@ main()
     })
     .finally(async () => {
         await prisma.$disconnect();
-        await pool.end();
     });
