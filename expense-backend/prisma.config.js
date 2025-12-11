@@ -1,3 +1,4 @@
+// prisma.config.js
 import 'dotenv/config';
 import { defineConfig, env } from 'prisma/config';
 
@@ -6,7 +7,7 @@ export default defineConfig({
     schema: 'prisma/schema.prisma',
     migrations: {
         path: 'prisma/migrations',
-        // vamos rodar um seed CJS direto, sem dist
+        // 👉 AQUI é o seed que queremos rodar
         seed: 'node ./prisma/seed.cjs',
     },
     datasource: {
