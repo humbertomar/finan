@@ -1,9 +1,8 @@
 // prisma/seed.cjs
-const { PrismaClient } = require('../src/generated/prisma/client');
+const { PrismaClient } = require('../dist/generated/prisma/client');
 const { PrismaPg } = require('@prisma/adapter-pg');
 const bcrypt = require('bcrypt');
 
-// mesmo esquema do PrismaService
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
 });
