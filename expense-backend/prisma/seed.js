@@ -1,13 +1,19 @@
-import { PrismaClient } from '@prisma/client';
+import pkg from '@prisma/client';
 import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcrypt';
 
+const { PrismaClient } = pkg;
+
+// Conexão do adapter PG
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
 
+// Adapter do Prisma 7
 const adapter = new PrismaPg(pool);
+
+// Instância do Prisma
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -39,11 +45,13 @@ async function main() {
     console.log('✔️ Seed finalizado com sucesso!');
 }
 
+// Execução do seed
 main()
     .catch((err) => {
-        console.error(err);
+        console.error('❌ Erro no seed:', err);
         process.exit(1);
     })
     .finally(async () => {
         await prisma.$disconnect();
+        await pool.end();
     });
