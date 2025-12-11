@@ -7,20 +7,22 @@ ENV TZ=America/Sao_Paulo
 
 WORKDIR /app
 
+# 1) Copia só o mínimo pra instalar deps
 COPY package*.json ./
-
 RUN npm ci
 
-# Copia arquivos de config básicos do Vite
+# 2) Copia configs usadas no build (INCLUI TAILWIND/POSTCSS)
 COPY vite.config.* ./
 COPY tsconfig*.json ./
+COPY tailwind.config.* ./
+COPY postcss.config.* ./
 COPY index.html ./
 
-# Copia fontes do front
+# 3) Código fonte
 COPY src ./src
 COPY public ./public
 
-# Build de produção
+# 4) Build de produção
 RUN npm run build
 
 # ===========================
@@ -30,13 +32,13 @@ FROM nginx:alpine AS runner
 
 ENV TZ=America/Sao_Paulo
 
-# Apaga o default
+# Limpa html padrão
 RUN rm -rf /usr/share/nginx/html/*
 
 # Copia o build
 COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copia um nginx.conf básico
+# Config do nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
