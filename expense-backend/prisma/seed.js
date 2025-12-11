@@ -1,13 +1,13 @@
-import { PrismaClient } from '../generated/prisma/client';
+// prisma/seed.js
+import { PrismaClient } from '../src/generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcrypt';
 
-// Mesmo adapter que você usa no PrismaService
+// mesmo esquema do PrismaService
 const adapter = new PrismaPg({
     connectionString: process.env.DATABASE_URL,
 });
 
-// Instância do Prisma usando o adapter
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
