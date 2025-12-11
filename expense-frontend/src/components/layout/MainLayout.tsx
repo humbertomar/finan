@@ -11,7 +11,7 @@ export function MainLayout() {
             <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
             {/* Header mobile com botão hambúrguer */}
-            <div className="fixed top-0 left-0 right-0 z-30 flex h-16 items-center border-b bg-card px-4 md:hidden">
+            <div className="fixed top-0 left-0 right-0 z-30 flex h-16 items-center border-b bg-white px-4 md:hidden">
                 <button
                     onClick={() => setIsSidebarOpen(true)}
                     className="p-2 hover:bg-muted rounded-lg transition-colors"
