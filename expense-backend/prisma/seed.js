@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 
 const { PrismaClient } = pkg;
 
-// Conexão do adapter PG
+// Pool para o adapter PG (mesma URL do PrismaConfig)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
 });
@@ -13,7 +13,7 @@ const pool = new Pool({
 // Adapter do Prisma 7
 const adapter = new PrismaPg(pool);
 
-// Instância do Prisma
+// Instância do Prisma usando o adapter
 const prisma = new PrismaClient({ adapter });
 
 async function main() {
@@ -45,7 +45,6 @@ async function main() {
     console.log('✔️ Seed finalizado com sucesso!');
 }
 
-// Execução do seed
 main()
     .catch((err) => {
         console.error('❌ Erro no seed:', err);
