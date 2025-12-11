@@ -47,7 +47,7 @@ COPY package*.json ./
 RUN npm ci --omit=dev
 
 # Copia Prisma config + schema
-COPY prisma.config.ts ./
+COPY prisma.config.js ./
 COPY prisma ./prisma
 
 # Copia o client gerado
