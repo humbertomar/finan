@@ -4,15 +4,17 @@ export interface Category {
     id: string;
     name: string;
     userId: string;
+    type: 'EXPENSE' | 'INCOME';
 }
 
-export const getCategories = async () => {
-    const response = await api.get<Category[]>('/categories');
+export const getCategories = async (type?: 'EXPENSE' | 'INCOME') => {
+    const params = type ? { type } : {};
+    const response = await api.get<Category[]>('/categories', { params });
     return response.data;
 };
 
-export const createCategory = async (name: string) => {
-    const response = await api.post<Category>('/categories', { name });
+export const createCategory = async (name: string, type: 'EXPENSE' | 'INCOME' = 'EXPENSE') => {
+    const response = await api.post<Category>('/categories', { name, type });
     return response.data;
 };
 

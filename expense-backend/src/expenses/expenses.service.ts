@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { CreateExpenseDto } from './dto/create-expense.dto';
 import { UpdateExpenseDto } from './dto/update-expense.dto';
 import { PrismaService } from '../prisma/prisma.service';
+import { ExpenseSplitsService } from '../expense-splits/expense-splits.service';
 
 @Injectable()
 export class ExpensesService {
-  constructor(private prisma: PrismaService) { }
+  constructor(
+    private prisma: PrismaService,
+    private expenseSplitsService: ExpenseSplitsService
+  ) { }
 
   async create(userId: number, createExpenseDto: CreateExpenseDto) {
     const {
@@ -60,12 +64,26 @@ export class ExpensesService {
       });
     }
 
+    // If shared with group, create splits
+    if (expense.isShared && expense.groupId) {
+      await this.expenseSplitsService.createEqualSplits(
+        expense.id,
+        Number(totalAmount),
+        expense.groupId
+      );
+
+      // Auto-confirm for creator
+      await this.expenseSplitsService.confirmSplit(expense.id, userId);
+    }
+
     return expense;
   }
 
   async findAll(userId: number, month: number, year: number) {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0); // Last day of month
+
+    await this.ensureRecurringExpenses(userId, month, year);
 
     // Find custom Logic:
     // We want expenses that happen in this month OR installments that fall in this month
@@ -103,6 +121,8 @@ export class ExpensesService {
   async findInstallments(userId: number, month: number, year: number) {
     const startDate = new Date(year, month - 1, 1);
     const endDate = new Date(year, month, 0);
+
+    await this.ensureRecurringExpenses(userId, month, year);
 
     return this.prisma.installment.findMany({
       where: {
@@ -177,5 +197,62 @@ export class ExpensesService {
     return this.prisma.expense.delete({
       where: { id },
     });
+  }
+
+  private async ensureRecurringExpenses(userId: number, month: number, year: number) {
+    const startDate = new Date(year, month - 1, 1);
+    const endDate = new Date(year, month, 0);
+
+    const recurring = await this.prisma.recurringExpense.findMany({
+      where: { userId, active: true }
+    });
+
+    for (const rec of recurring) {
+      // Check if already generated for this month
+      const exists = await this.prisma.expense.findFirst({
+        where: {
+          recurringExpenseId: rec.id,
+          date: { gte: startDate, lte: endDate }
+        }
+      });
+
+      if (!exists) {
+        // Create it
+        const day = rec.dayOfMonth || 1;
+        // Handle invalid days (e.g. Feb 30 -> Feb 28/29)
+        const maxDaysInMonth = endDate.getDate(); // since endDate is last day
+        const validDay = Math.min(day, maxDaysInMonth);
+
+        const expenseDate = new Date(year, month - 1, validDay);
+
+        // Transaction to create Expense + Installment
+        await this.prisma.$transaction(async (tx) => {
+          const expense = await tx.expense.create({
+            data: {
+              userId,
+              categoryId: rec.categoryId,
+              description: rec.description,
+              totalAmount: rec.amount,
+              date: expenseDate,
+              isInstallment: false,
+              installmentCount: 1,
+              recurringExpenseId: rec.id
+            }
+          });
+
+          await tx.installment.create({
+            data: {
+              expenseId: expense.id,
+              number: 1,
+              amount: rec.amount,
+              date: expenseDate,
+              status: 'OPEN'
+            }
+          });
+        });
+
+        console.log(`Auto-generated recurring expense: ${rec.description} for ${month}/${year}`);
+      }
+    }
   }
 }

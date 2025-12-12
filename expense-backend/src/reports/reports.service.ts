@@ -13,6 +13,15 @@ export class ReportsService {
     // It includes My Installments + Shared Installments (whether I paid or not yet)
     // Actually, "Total gasto no mês" usually means "Total Liability".
 
+    // 0. Total Income
+    const incomes = await this.prisma.income.findMany({
+      where: {
+        userId,
+        date: { gte: startDate, lte: endDate }
+      }
+    });
+    const totalIncome = incomes.reduce((acc, curr) => acc + Number(curr.amount), 0);
+
     // 1. Total spent in month (Installments due this month)
     const installments = await this.prisma.installment.findMany({
       where: {
@@ -83,10 +92,21 @@ export class ReportsService {
       amount: paidByMap.get(u.id) || 0
     }));
 
+    // 5. Recent Expenses
+    const recentExpenses = await this.prisma.expense.findMany({
+      where: { userId },
+      orderBy: { date: 'desc' },
+      take: 5,
+      include: { category: true }
+    });
+
     return {
+      totalIncome,
       totalSpent,
+      balance: totalIncome - totalSpent,
       totalNextMonth,
       pieChart,
+      recentExpenses,
       sharedStats: {
         totalShared,
         paidBy: sharedPaidBy

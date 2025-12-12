@@ -39,18 +39,21 @@ export type CategorySumAggregateOutputType = {
 export type CategoryMinAggregateOutputType = {
   id: number | null
   name: string | null
+  type: $Enums.CategoryType | null
   userId: number | null
 }
 
 export type CategoryMaxAggregateOutputType = {
   id: number | null
   name: string | null
+  type: $Enums.CategoryType | null
   userId: number | null
 }
 
 export type CategoryCountAggregateOutputType = {
   id: number
   name: number
+  type: number
   userId: number
   _all: number
 }
@@ -69,18 +72,21 @@ export type CategorySumAggregateInputType = {
 export type CategoryMinAggregateInputType = {
   id?: true
   name?: true
+  type?: true
   userId?: true
 }
 
 export type CategoryMaxAggregateInputType = {
   id?: true
   name?: true
+  type?: true
   userId?: true
 }
 
 export type CategoryCountAggregateInputType = {
   id?: true
   name?: true
+  type?: true
   userId?: true
   _all?: true
 }
@@ -174,6 +180,7 @@ export type CategoryGroupByArgs<ExtArgs extends runtime.Types.Extensions.Interna
 export type CategoryGroupByOutputType = {
   id: number
   name: string
+  type: $Enums.CategoryType
   userId: number
   _count: CategoryCountAggregateOutputType | null
   _avg: CategoryAvgAggregateOutputType | null
@@ -203,17 +210,23 @@ export type CategoryWhereInput = {
   NOT?: Prisma.CategoryWhereInput | Prisma.CategoryWhereInput[]
   id?: Prisma.IntFilter<"Category"> | number
   name?: Prisma.StringFilter<"Category"> | string
+  type?: Prisma.EnumCategoryTypeFilter<"Category"> | $Enums.CategoryType
   userId?: Prisma.IntFilter<"Category"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   expenses?: Prisma.ExpenseListRelationFilter
+  incomes?: Prisma.IncomeListRelationFilter
+  recurringExpenses?: Prisma.RecurringExpenseListRelationFilter
 }
 
 export type CategoryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   expenses?: Prisma.ExpenseOrderByRelationAggregateInput
+  incomes?: Prisma.IncomeOrderByRelationAggregateInput
+  recurringExpenses?: Prisma.RecurringExpenseOrderByRelationAggregateInput
 }
 
 export type CategoryWhereUniqueInput = Prisma.AtLeast<{
@@ -222,14 +235,18 @@ export type CategoryWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.CategoryWhereInput[]
   NOT?: Prisma.CategoryWhereInput | Prisma.CategoryWhereInput[]
   name?: Prisma.StringFilter<"Category"> | string
+  type?: Prisma.EnumCategoryTypeFilter<"Category"> | $Enums.CategoryType
   userId?: Prisma.IntFilter<"Category"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   expenses?: Prisma.ExpenseListRelationFilter
+  incomes?: Prisma.IncomeListRelationFilter
+  recurringExpenses?: Prisma.RecurringExpenseListRelationFilter
 }, "id">
 
 export type CategoryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   _count?: Prisma.CategoryCountOrderByAggregateInput
   _avg?: Prisma.CategoryAvgOrderByAggregateInput
@@ -244,48 +261,64 @@ export type CategoryScalarWhereWithAggregatesInput = {
   NOT?: Prisma.CategoryScalarWhereWithAggregatesInput | Prisma.CategoryScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"Category"> | number
   name?: Prisma.StringWithAggregatesFilter<"Category"> | string
+  type?: Prisma.EnumCategoryTypeWithAggregatesFilter<"Category"> | $Enums.CategoryType
   userId?: Prisma.IntWithAggregatesFilter<"Category"> | number
 }
 
 export type CategoryCreateInput = {
   name: string
+  type?: $Enums.CategoryType
   user: Prisma.UserCreateNestedOneWithoutCategoriesInput
   expenses?: Prisma.ExpenseCreateNestedManyWithoutCategoryInput
+  incomes?: Prisma.IncomeCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseCreateNestedManyWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateInput = {
   id?: number
   name: string
+  type?: $Enums.CategoryType
   userId: number
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutCategoryInput
+  incomes?: Prisma.IncomeUncheckedCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedCreateNestedManyWithoutCategoryInput
 }
 
 export type CategoryUpdateInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   user?: Prisma.UserUpdateOneRequiredWithoutCategoriesNestedInput
   expenses?: Prisma.ExpenseUpdateManyWithoutCategoryNestedInput
+  incomes?: Prisma.IncomeUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+  incomes?: Prisma.IncomeUncheckedUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryCreateManyInput = {
   id?: number
   name: string
+  type?: $Enums.CategoryType
   userId: number
 }
 
 export type CategoryUpdateManyMutationInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
 }
 
 export type CategoryUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
@@ -302,6 +335,7 @@ export type CategoryOrderByRelationAggregateInput = {
 export type CategoryCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -313,12 +347,14 @@ export type CategoryAvgOrderByAggregateInput = {
 export type CategoryMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
 export type CategoryMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
+  type?: Prisma.SortOrder
   userId?: Prisma.SortOrder
 }
 
@@ -374,6 +410,10 @@ export type CategoryUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.CategoryScalarWhereInput | Prisma.CategoryScalarWhereInput[]
 }
 
+export type EnumCategoryTypeFieldUpdateOperationsInput = {
+  set?: $Enums.CategoryType
+}
+
 export type CategoryCreateNestedOneWithoutExpensesInput = {
   create?: Prisma.XOR<Prisma.CategoryCreateWithoutExpensesInput, Prisma.CategoryUncheckedCreateWithoutExpensesInput>
   connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutExpensesInput
@@ -388,15 +428,49 @@ export type CategoryUpdateOneRequiredWithoutExpensesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutExpensesInput, Prisma.CategoryUpdateWithoutExpensesInput>, Prisma.CategoryUncheckedUpdateWithoutExpensesInput>
 }
 
+export type CategoryCreateNestedOneWithoutIncomesInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIncomesInput, Prisma.CategoryUncheckedCreateWithoutIncomesInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIncomesInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryUpdateOneRequiredWithoutIncomesNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutIncomesInput, Prisma.CategoryUncheckedCreateWithoutIncomesInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutIncomesInput
+  upsert?: Prisma.CategoryUpsertWithoutIncomesInput
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutIncomesInput, Prisma.CategoryUpdateWithoutIncomesInput>, Prisma.CategoryUncheckedUpdateWithoutIncomesInput>
+}
+
+export type CategoryCreateNestedOneWithoutRecurringExpensesInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutRecurringExpensesInput, Prisma.CategoryUncheckedCreateWithoutRecurringExpensesInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutRecurringExpensesInput
+  connect?: Prisma.CategoryWhereUniqueInput
+}
+
+export type CategoryUpdateOneRequiredWithoutRecurringExpensesNestedInput = {
+  create?: Prisma.XOR<Prisma.CategoryCreateWithoutRecurringExpensesInput, Prisma.CategoryUncheckedCreateWithoutRecurringExpensesInput>
+  connectOrCreate?: Prisma.CategoryCreateOrConnectWithoutRecurringExpensesInput
+  upsert?: Prisma.CategoryUpsertWithoutRecurringExpensesInput
+  connect?: Prisma.CategoryWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.CategoryUpdateToOneWithWhereWithoutRecurringExpensesInput, Prisma.CategoryUpdateWithoutRecurringExpensesInput>, Prisma.CategoryUncheckedUpdateWithoutRecurringExpensesInput>
+}
+
 export type CategoryCreateWithoutUserInput = {
   name: string
+  type?: $Enums.CategoryType
   expenses?: Prisma.ExpenseCreateNestedManyWithoutCategoryInput
+  incomes?: Prisma.IncomeCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseCreateNestedManyWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateWithoutUserInput = {
   id?: number
   name: string
+  type?: $Enums.CategoryType
   expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutCategoryInput
+  incomes?: Prisma.IncomeUncheckedCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedCreateNestedManyWithoutCategoryInput
 }
 
 export type CategoryCreateOrConnectWithoutUserInput = {
@@ -431,18 +505,25 @@ export type CategoryScalarWhereInput = {
   NOT?: Prisma.CategoryScalarWhereInput | Prisma.CategoryScalarWhereInput[]
   id?: Prisma.IntFilter<"Category"> | number
   name?: Prisma.StringFilter<"Category"> | string
+  type?: Prisma.EnumCategoryTypeFilter<"Category"> | $Enums.CategoryType
   userId?: Prisma.IntFilter<"Category"> | number
 }
 
 export type CategoryCreateWithoutExpensesInput = {
   name: string
+  type?: $Enums.CategoryType
   user: Prisma.UserCreateNestedOneWithoutCategoriesInput
+  incomes?: Prisma.IncomeCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseCreateNestedManyWithoutCategoryInput
 }
 
 export type CategoryUncheckedCreateWithoutExpensesInput = {
   id?: number
   name: string
+  type?: $Enums.CategoryType
   userId: number
+  incomes?: Prisma.IncomeUncheckedCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedCreateNestedManyWithoutCategoryInput
 }
 
 export type CategoryCreateOrConnectWithoutExpensesInput = {
@@ -463,34 +544,148 @@ export type CategoryUpdateToOneWithWhereWithoutExpensesInput = {
 
 export type CategoryUpdateWithoutExpensesInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   user?: Prisma.UserUpdateOneRequiredWithoutCategoriesNestedInput
+  incomes?: Prisma.IncomeUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutExpensesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  incomes?: Prisma.IncomeUncheckedUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryCreateWithoutIncomesInput = {
+  name: string
+  type?: $Enums.CategoryType
+  user: Prisma.UserCreateNestedOneWithoutCategoriesInput
+  expenses?: Prisma.ExpenseCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryUncheckedCreateWithoutIncomesInput = {
+  id?: number
+  name: string
+  type?: $Enums.CategoryType
+  userId: number
+  expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutCategoryInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryCreateOrConnectWithoutIncomesInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIncomesInput, Prisma.CategoryUncheckedCreateWithoutIncomesInput>
+}
+
+export type CategoryUpsertWithoutIncomesInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutIncomesInput, Prisma.CategoryUncheckedUpdateWithoutIncomesInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutIncomesInput, Prisma.CategoryUncheckedCreateWithoutIncomesInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutIncomesInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutIncomesInput, Prisma.CategoryUncheckedUpdateWithoutIncomesInput>
+}
+
+export type CategoryUpdateWithoutIncomesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  user?: Prisma.UserUpdateOneRequiredWithoutCategoriesNestedInput
+  expenses?: Prisma.ExpenseUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutIncomesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryCreateWithoutRecurringExpensesInput = {
+  name: string
+  type?: $Enums.CategoryType
+  user: Prisma.UserCreateNestedOneWithoutCategoriesInput
+  expenses?: Prisma.ExpenseCreateNestedManyWithoutCategoryInput
+  incomes?: Prisma.IncomeCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryUncheckedCreateWithoutRecurringExpensesInput = {
+  id?: number
+  name: string
+  type?: $Enums.CategoryType
+  userId: number
+  expenses?: Prisma.ExpenseUncheckedCreateNestedManyWithoutCategoryInput
+  incomes?: Prisma.IncomeUncheckedCreateNestedManyWithoutCategoryInput
+}
+
+export type CategoryCreateOrConnectWithoutRecurringExpensesInput = {
+  where: Prisma.CategoryWhereUniqueInput
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutRecurringExpensesInput, Prisma.CategoryUncheckedCreateWithoutRecurringExpensesInput>
+}
+
+export type CategoryUpsertWithoutRecurringExpensesInput = {
+  update: Prisma.XOR<Prisma.CategoryUpdateWithoutRecurringExpensesInput, Prisma.CategoryUncheckedUpdateWithoutRecurringExpensesInput>
+  create: Prisma.XOR<Prisma.CategoryCreateWithoutRecurringExpensesInput, Prisma.CategoryUncheckedCreateWithoutRecurringExpensesInput>
+  where?: Prisma.CategoryWhereInput
+}
+
+export type CategoryUpdateToOneWithWhereWithoutRecurringExpensesInput = {
+  where?: Prisma.CategoryWhereInput
+  data: Prisma.XOR<Prisma.CategoryUpdateWithoutRecurringExpensesInput, Prisma.CategoryUncheckedUpdateWithoutRecurringExpensesInput>
+}
+
+export type CategoryUpdateWithoutRecurringExpensesInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  user?: Prisma.UserUpdateOneRequiredWithoutCategoriesNestedInput
+  expenses?: Prisma.ExpenseUpdateManyWithoutCategoryNestedInput
+  incomes?: Prisma.IncomeUpdateManyWithoutCategoryNestedInput
+}
+
+export type CategoryUncheckedUpdateWithoutRecurringExpensesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+  incomes?: Prisma.IncomeUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryCreateManyUserInput = {
   id?: number
   name: string
+  type?: $Enums.CategoryType
 }
 
 export type CategoryUpdateWithoutUserInput = {
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   expenses?: Prisma.ExpenseUpdateManyWithoutCategoryNestedInput
+  incomes?: Prisma.IncomeUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
   expenses?: Prisma.ExpenseUncheckedUpdateManyWithoutCategoryNestedInput
+  incomes?: Prisma.IncomeUncheckedUpdateManyWithoutCategoryNestedInput
+  recurringExpenses?: Prisma.RecurringExpenseUncheckedUpdateManyWithoutCategoryNestedInput
 }
 
 export type CategoryUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumCategoryTypeFieldUpdateOperationsInput | $Enums.CategoryType
 }
 
 
@@ -500,10 +695,14 @@ export type CategoryUncheckedUpdateManyWithoutUserInput = {
 
 export type CategoryCountOutputType = {
   expenses: number
+  incomes: number
+  recurringExpenses: number
 }
 
 export type CategoryCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   expenses?: boolean | CategoryCountOutputTypeCountExpensesArgs
+  incomes?: boolean | CategoryCountOutputTypeCountIncomesArgs
+  recurringExpenses?: boolean | CategoryCountOutputTypeCountRecurringExpensesArgs
 }
 
 /**
@@ -523,19 +722,37 @@ export type CategoryCountOutputTypeCountExpensesArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ExpenseWhereInput
 }
 
+/**
+ * CategoryCountOutputType without action
+ */
+export type CategoryCountOutputTypeCountIncomesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.IncomeWhereInput
+}
+
+/**
+ * CategoryCountOutputType without action
+ */
+export type CategoryCountOutputTypeCountRecurringExpensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.RecurringExpenseWhereInput
+}
+
 
 export type CategorySelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  type?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   expenses?: boolean | Prisma.Category$expensesArgs<ExtArgs>
+  incomes?: boolean | Prisma.Category$incomesArgs<ExtArgs>
+  recurringExpenses?: boolean | Prisma.Category$recurringExpensesArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["category"]>
 
 export type CategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  type?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["category"]>
@@ -543,6 +760,7 @@ export type CategorySelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type CategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   name?: boolean
+  type?: boolean
   userId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["category"]>
@@ -550,13 +768,16 @@ export type CategorySelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
 export type CategorySelectScalar = {
   id?: boolean
   name?: boolean
+  type?: boolean
   userId?: boolean
 }
 
-export type CategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "userId", ExtArgs["result"]["category"]>
+export type CategoryOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "type" | "userId", ExtArgs["result"]["category"]>
 export type CategoryInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   expenses?: boolean | Prisma.Category$expensesArgs<ExtArgs>
+  incomes?: boolean | Prisma.Category$incomesArgs<ExtArgs>
+  recurringExpenses?: boolean | Prisma.Category$recurringExpensesArgs<ExtArgs>
   _count?: boolean | Prisma.CategoryCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type CategoryIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -571,10 +792,13 @@ export type $CategoryPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
     expenses: Prisma.$ExpensePayload<ExtArgs>[]
+    incomes: Prisma.$IncomePayload<ExtArgs>[]
+    recurringExpenses: Prisma.$RecurringExpensePayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     name: string
+    type: $Enums.CategoryType
     userId: number
   }, ExtArgs["result"]["category"]>
   composites: {}
@@ -972,6 +1196,8 @@ export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   expenses<T extends Prisma.Category$expensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$expensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  incomes<T extends Prisma.Category$incomesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$incomesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$IncomePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  recurringExpenses<T extends Prisma.Category$recurringExpensesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Category$recurringExpensesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RecurringExpensePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1003,6 +1229,7 @@ export interface Prisma__CategoryClient<T, Null = never, ExtArgs extends runtime
 export interface CategoryFieldRefs {
   readonly id: Prisma.FieldRef<"Category", 'Int'>
   readonly name: Prisma.FieldRef<"Category", 'String'>
+  readonly type: Prisma.FieldRef<"Category", 'CategoryType'>
   readonly userId: Prisma.FieldRef<"Category", 'Int'>
 }
     
@@ -1421,6 +1648,54 @@ export type Category$expensesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.ExpenseScalarFieldEnum | Prisma.ExpenseScalarFieldEnum[]
+}
+
+/**
+ * Category.incomes
+ */
+export type Category$incomesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Income
+   */
+  select?: Prisma.IncomeSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Income
+   */
+  omit?: Prisma.IncomeOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.IncomeInclude<ExtArgs> | null
+  where?: Prisma.IncomeWhereInput
+  orderBy?: Prisma.IncomeOrderByWithRelationInput | Prisma.IncomeOrderByWithRelationInput[]
+  cursor?: Prisma.IncomeWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.IncomeScalarFieldEnum | Prisma.IncomeScalarFieldEnum[]
+}
+
+/**
+ * Category.recurringExpenses
+ */
+export type Category$recurringExpensesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RecurringExpense
+   */
+  select?: Prisma.RecurringExpenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RecurringExpense
+   */
+  omit?: Prisma.RecurringExpenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecurringExpenseInclude<ExtArgs> | null
+  where?: Prisma.RecurringExpenseWhereInput
+  orderBy?: Prisma.RecurringExpenseOrderByWithRelationInput | Prisma.RecurringExpenseOrderByWithRelationInput[]
+  cursor?: Prisma.RecurringExpenseWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.RecurringExpenseScalarFieldEnum | Prisma.RecurringExpenseScalarFieldEnum[]
 }
 
 /**

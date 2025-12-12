@@ -32,6 +32,8 @@ export type ExpenseAvgAggregateOutputType = {
   installmentCount: number | null
   userId: number | null
   categoryId: number | null
+  recurringExpenseId: number | null
+  groupId: number | null
 }
 
 export type ExpenseSumAggregateOutputType = {
@@ -40,6 +42,8 @@ export type ExpenseSumAggregateOutputType = {
   installmentCount: number | null
   userId: number | null
   categoryId: number | null
+  recurringExpenseId: number | null
+  groupId: number | null
 }
 
 export type ExpenseMinAggregateOutputType = {
@@ -51,10 +55,13 @@ export type ExpenseMinAggregateOutputType = {
   isInstallment: boolean | null
   installmentCount: number | null
   isShared: boolean | null
+  splitType: $Enums.SplitType | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: number | null
   categoryId: number | null
+  recurringExpenseId: number | null
+  groupId: number | null
 }
 
 export type ExpenseMaxAggregateOutputType = {
@@ -66,10 +73,13 @@ export type ExpenseMaxAggregateOutputType = {
   isInstallment: boolean | null
   installmentCount: number | null
   isShared: boolean | null
+  splitType: $Enums.SplitType | null
   createdAt: Date | null
   updatedAt: Date | null
   userId: number | null
   categoryId: number | null
+  recurringExpenseId: number | null
+  groupId: number | null
 }
 
 export type ExpenseCountAggregateOutputType = {
@@ -81,10 +91,13 @@ export type ExpenseCountAggregateOutputType = {
   isInstallment: number
   installmentCount: number
   isShared: number
+  splitType: number
   createdAt: number
   updatedAt: number
   userId: number
   categoryId: number
+  recurringExpenseId: number
+  groupId: number
   _all: number
 }
 
@@ -95,6 +108,8 @@ export type ExpenseAvgAggregateInputType = {
   installmentCount?: true
   userId?: true
   categoryId?: true
+  recurringExpenseId?: true
+  groupId?: true
 }
 
 export type ExpenseSumAggregateInputType = {
@@ -103,6 +118,8 @@ export type ExpenseSumAggregateInputType = {
   installmentCount?: true
   userId?: true
   categoryId?: true
+  recurringExpenseId?: true
+  groupId?: true
 }
 
 export type ExpenseMinAggregateInputType = {
@@ -114,10 +131,13 @@ export type ExpenseMinAggregateInputType = {
   isInstallment?: true
   installmentCount?: true
   isShared?: true
+  splitType?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
   categoryId?: true
+  recurringExpenseId?: true
+  groupId?: true
 }
 
 export type ExpenseMaxAggregateInputType = {
@@ -129,10 +149,13 @@ export type ExpenseMaxAggregateInputType = {
   isInstallment?: true
   installmentCount?: true
   isShared?: true
+  splitType?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
   categoryId?: true
+  recurringExpenseId?: true
+  groupId?: true
 }
 
 export type ExpenseCountAggregateInputType = {
@@ -144,10 +167,13 @@ export type ExpenseCountAggregateInputType = {
   isInstallment?: true
   installmentCount?: true
   isShared?: true
+  splitType?: true
   createdAt?: true
   updatedAt?: true
   userId?: true
   categoryId?: true
+  recurringExpenseId?: true
+  groupId?: true
   _all?: true
 }
 
@@ -246,10 +272,13 @@ export type ExpenseGroupByOutputType = {
   isInstallment: boolean
   installmentCount: number
   isShared: boolean
+  splitType: $Enums.SplitType
   createdAt: Date
   updatedAt: Date
   userId: number
   categoryId: number
+  recurringExpenseId: number | null
+  groupId: number | null
   _count: ExpenseCountAggregateOutputType | null
   _avg: ExpenseAvgAggregateOutputType | null
   _sum: ExpenseSumAggregateOutputType | null
@@ -284,13 +313,19 @@ export type ExpenseWhereInput = {
   isInstallment?: Prisma.BoolFilter<"Expense"> | boolean
   installmentCount?: Prisma.IntFilter<"Expense"> | number
   isShared?: Prisma.BoolFilter<"Expense"> | boolean
+  splitType?: Prisma.EnumSplitTypeFilter<"Expense"> | $Enums.SplitType
   createdAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
   userId?: Prisma.IntFilter<"Expense"> | number
   categoryId?: Prisma.IntFilter<"Expense"> | number
+  recurringExpenseId?: Prisma.IntNullableFilter<"Expense"> | number | null
+  groupId?: Prisma.IntNullableFilter<"Expense"> | number | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   installments?: Prisma.InstallmentListRelationFilter
+  splits?: Prisma.ExpenseSplitListRelationFilter
+  recurringExpense?: Prisma.XOR<Prisma.RecurringExpenseNullableScalarRelationFilter, Prisma.RecurringExpenseWhereInput> | null
+  group?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
 }
 
 export type ExpenseOrderByWithRelationInput = {
@@ -302,13 +337,19 @@ export type ExpenseOrderByWithRelationInput = {
   isInstallment?: Prisma.SortOrder
   installmentCount?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  splitType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
   category?: Prisma.CategoryOrderByWithRelationInput
   installments?: Prisma.InstallmentOrderByRelationAggregateInput
+  splits?: Prisma.ExpenseSplitOrderByRelationAggregateInput
+  recurringExpense?: Prisma.RecurringExpenseOrderByWithRelationInput
+  group?: Prisma.GroupOrderByWithRelationInput
 }
 
 export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
@@ -323,13 +364,19 @@ export type ExpenseWhereUniqueInput = Prisma.AtLeast<{
   isInstallment?: Prisma.BoolFilter<"Expense"> | boolean
   installmentCount?: Prisma.IntFilter<"Expense"> | number
   isShared?: Prisma.BoolFilter<"Expense"> | boolean
+  splitType?: Prisma.EnumSplitTypeFilter<"Expense"> | $Enums.SplitType
   createdAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
   userId?: Prisma.IntFilter<"Expense"> | number
   categoryId?: Prisma.IntFilter<"Expense"> | number
+  recurringExpenseId?: Prisma.IntNullableFilter<"Expense"> | number | null
+  groupId?: Prisma.IntNullableFilter<"Expense"> | number | null
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
   category?: Prisma.XOR<Prisma.CategoryScalarRelationFilter, Prisma.CategoryWhereInput>
   installments?: Prisma.InstallmentListRelationFilter
+  splits?: Prisma.ExpenseSplitListRelationFilter
+  recurringExpense?: Prisma.XOR<Prisma.RecurringExpenseNullableScalarRelationFilter, Prisma.RecurringExpenseWhereInput> | null
+  group?: Prisma.XOR<Prisma.GroupNullableScalarRelationFilter, Prisma.GroupWhereInput> | null
 }, "id">
 
 export type ExpenseOrderByWithAggregationInput = {
@@ -341,10 +388,13 @@ export type ExpenseOrderByWithAggregationInput = {
   isInstallment?: Prisma.SortOrder
   installmentCount?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  splitType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrderInput | Prisma.SortOrder
+  groupId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.ExpenseCountOrderByAggregateInput
   _avg?: Prisma.ExpenseAvgOrderByAggregateInput
   _max?: Prisma.ExpenseMaxOrderByAggregateInput
@@ -364,10 +414,13 @@ export type ExpenseScalarWhereWithAggregatesInput = {
   isInstallment?: Prisma.BoolWithAggregatesFilter<"Expense"> | boolean
   installmentCount?: Prisma.IntWithAggregatesFilter<"Expense"> | number
   isShared?: Prisma.BoolWithAggregatesFilter<"Expense"> | boolean
+  splitType?: Prisma.EnumSplitTypeWithAggregatesFilter<"Expense"> | $Enums.SplitType
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Expense"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Expense"> | Date | string
   userId?: Prisma.IntWithAggregatesFilter<"Expense"> | number
   categoryId?: Prisma.IntWithAggregatesFilter<"Expense"> | number
+  recurringExpenseId?: Prisma.IntNullableWithAggregatesFilter<"Expense"> | number | null
+  groupId?: Prisma.IntNullableWithAggregatesFilter<"Expense"> | number | null
 }
 
 export type ExpenseCreateInput = {
@@ -378,11 +431,15 @@ export type ExpenseCreateInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutExpensesInput
   category: Prisma.CategoryCreateNestedOneWithoutExpensesInput
   installments?: Prisma.InstallmentCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitCreateNestedManyWithoutExpenseInput
+  recurringExpense?: Prisma.RecurringExpenseCreateNestedOneWithoutExpensesInput
+  group?: Prisma.GroupCreateNestedOneWithoutExpensesInput
 }
 
 export type ExpenseUncheckedCreateInput = {
@@ -394,11 +451,15 @@ export type ExpenseUncheckedCreateInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: number
   categoryId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
   installments?: Prisma.InstallmentUncheckedCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitUncheckedCreateNestedManyWithoutExpenseInput
 }
 
 export type ExpenseUpdateInput = {
@@ -409,11 +470,15 @@ export type ExpenseUpdateInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutExpensesNestedInput
   category?: Prisma.CategoryUpdateOneRequiredWithoutExpensesNestedInput
   installments?: Prisma.InstallmentUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUpdateManyWithoutExpenseNestedInput
+  recurringExpense?: Prisma.RecurringExpenseUpdateOneWithoutExpensesNestedInput
+  group?: Prisma.GroupUpdateOneWithoutExpensesNestedInput
 }
 
 export type ExpenseUncheckedUpdateInput = {
@@ -425,11 +490,15 @@ export type ExpenseUncheckedUpdateInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   installments?: Prisma.InstallmentUncheckedUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
 export type ExpenseCreateManyInput = {
@@ -441,10 +510,13 @@ export type ExpenseCreateManyInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: number
   categoryId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
 }
 
 export type ExpenseUpdateManyMutationInput = {
@@ -455,6 +527,7 @@ export type ExpenseUpdateManyMutationInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -468,10 +541,13 @@ export type ExpenseUncheckedUpdateManyInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ExpenseListRelationFilter = {
@@ -493,10 +569,13 @@ export type ExpenseCountOrderByAggregateInput = {
   isInstallment?: Prisma.SortOrder
   installmentCount?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  splitType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ExpenseAvgOrderByAggregateInput = {
@@ -505,6 +584,8 @@ export type ExpenseAvgOrderByAggregateInput = {
   installmentCount?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ExpenseMaxOrderByAggregateInput = {
@@ -516,10 +597,13 @@ export type ExpenseMaxOrderByAggregateInput = {
   isInstallment?: Prisma.SortOrder
   installmentCount?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  splitType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ExpenseMinOrderByAggregateInput = {
@@ -531,10 +615,13 @@ export type ExpenseMinOrderByAggregateInput = {
   isInstallment?: Prisma.SortOrder
   installmentCount?: Prisma.SortOrder
   isShared?: Prisma.SortOrder
+  splitType?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ExpenseSumOrderByAggregateInput = {
@@ -543,6 +630,8 @@ export type ExpenseSumOrderByAggregateInput = {
   installmentCount?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   categoryId?: Prisma.SortOrder
+  recurringExpenseId?: Prisma.SortOrder
+  groupId?: Prisma.SortOrder
 }
 
 export type ExpenseScalarRelationFilter = {
@@ -650,6 +739,18 @@ export type BoolFieldUpdateOperationsInput = {
   set?: boolean
 }
 
+export type EnumSplitTypeFieldUpdateOperationsInput = {
+  set?: $Enums.SplitType
+}
+
+export type NullableIntFieldUpdateOperationsInput = {
+  set?: number | null
+  increment?: number
+  decrement?: number
+  multiply?: number
+  divide?: number
+}
+
 export type ExpenseCreateNestedOneWithoutInstallmentsInput = {
   create?: Prisma.XOR<Prisma.ExpenseCreateWithoutInstallmentsInput, Prisma.ExpenseUncheckedCreateWithoutInstallmentsInput>
   connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutInstallmentsInput
@@ -664,6 +765,104 @@ export type ExpenseUpdateOneRequiredWithoutInstallmentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ExpenseUpdateToOneWithWhereWithoutInstallmentsInput, Prisma.ExpenseUpdateWithoutInstallmentsInput>, Prisma.ExpenseUncheckedUpdateWithoutInstallmentsInput>
 }
 
+export type ExpenseCreateNestedManyWithoutRecurringExpenseInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput> | Prisma.ExpenseCreateWithoutRecurringExpenseInput[] | Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput | Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput[]
+  createMany?: Prisma.ExpenseCreateManyRecurringExpenseInputEnvelope
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+}
+
+export type ExpenseUncheckedCreateNestedManyWithoutRecurringExpenseInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput> | Prisma.ExpenseCreateWithoutRecurringExpenseInput[] | Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput | Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput[]
+  createMany?: Prisma.ExpenseCreateManyRecurringExpenseInputEnvelope
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+}
+
+export type ExpenseUpdateManyWithoutRecurringExpenseNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput> | Prisma.ExpenseCreateWithoutRecurringExpenseInput[] | Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput | Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput[]
+  upsert?: Prisma.ExpenseUpsertWithWhereUniqueWithoutRecurringExpenseInput | Prisma.ExpenseUpsertWithWhereUniqueWithoutRecurringExpenseInput[]
+  createMany?: Prisma.ExpenseCreateManyRecurringExpenseInputEnvelope
+  set?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  disconnect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  delete?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  update?: Prisma.ExpenseUpdateWithWhereUniqueWithoutRecurringExpenseInput | Prisma.ExpenseUpdateWithWhereUniqueWithoutRecurringExpenseInput[]
+  updateMany?: Prisma.ExpenseUpdateManyWithWhereWithoutRecurringExpenseInput | Prisma.ExpenseUpdateManyWithWhereWithoutRecurringExpenseInput[]
+  deleteMany?: Prisma.ExpenseScalarWhereInput | Prisma.ExpenseScalarWhereInput[]
+}
+
+export type ExpenseUncheckedUpdateManyWithoutRecurringExpenseNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput> | Prisma.ExpenseCreateWithoutRecurringExpenseInput[] | Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput | Prisma.ExpenseCreateOrConnectWithoutRecurringExpenseInput[]
+  upsert?: Prisma.ExpenseUpsertWithWhereUniqueWithoutRecurringExpenseInput | Prisma.ExpenseUpsertWithWhereUniqueWithoutRecurringExpenseInput[]
+  createMany?: Prisma.ExpenseCreateManyRecurringExpenseInputEnvelope
+  set?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  disconnect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  delete?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  update?: Prisma.ExpenseUpdateWithWhereUniqueWithoutRecurringExpenseInput | Prisma.ExpenseUpdateWithWhereUniqueWithoutRecurringExpenseInput[]
+  updateMany?: Prisma.ExpenseUpdateManyWithWhereWithoutRecurringExpenseInput | Prisma.ExpenseUpdateManyWithWhereWithoutRecurringExpenseInput[]
+  deleteMany?: Prisma.ExpenseScalarWhereInput | Prisma.ExpenseScalarWhereInput[]
+}
+
+export type ExpenseCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutGroupInput, Prisma.ExpenseUncheckedCreateWithoutGroupInput> | Prisma.ExpenseCreateWithoutGroupInput[] | Prisma.ExpenseUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutGroupInput | Prisma.ExpenseCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.ExpenseCreateManyGroupInputEnvelope
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+}
+
+export type ExpenseUncheckedCreateNestedManyWithoutGroupInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutGroupInput, Prisma.ExpenseUncheckedCreateWithoutGroupInput> | Prisma.ExpenseCreateWithoutGroupInput[] | Prisma.ExpenseUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutGroupInput | Prisma.ExpenseCreateOrConnectWithoutGroupInput[]
+  createMany?: Prisma.ExpenseCreateManyGroupInputEnvelope
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+}
+
+export type ExpenseUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutGroupInput, Prisma.ExpenseUncheckedCreateWithoutGroupInput> | Prisma.ExpenseCreateWithoutGroupInput[] | Prisma.ExpenseUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutGroupInput | Prisma.ExpenseCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.ExpenseUpsertWithWhereUniqueWithoutGroupInput | Prisma.ExpenseUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.ExpenseCreateManyGroupInputEnvelope
+  set?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  disconnect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  delete?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  update?: Prisma.ExpenseUpdateWithWhereUniqueWithoutGroupInput | Prisma.ExpenseUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.ExpenseUpdateManyWithWhereWithoutGroupInput | Prisma.ExpenseUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.ExpenseScalarWhereInput | Prisma.ExpenseScalarWhereInput[]
+}
+
+export type ExpenseUncheckedUpdateManyWithoutGroupNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutGroupInput, Prisma.ExpenseUncheckedCreateWithoutGroupInput> | Prisma.ExpenseCreateWithoutGroupInput[] | Prisma.ExpenseUncheckedCreateWithoutGroupInput[]
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutGroupInput | Prisma.ExpenseCreateOrConnectWithoutGroupInput[]
+  upsert?: Prisma.ExpenseUpsertWithWhereUniqueWithoutGroupInput | Prisma.ExpenseUpsertWithWhereUniqueWithoutGroupInput[]
+  createMany?: Prisma.ExpenseCreateManyGroupInputEnvelope
+  set?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  disconnect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  delete?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  connect?: Prisma.ExpenseWhereUniqueInput | Prisma.ExpenseWhereUniqueInput[]
+  update?: Prisma.ExpenseUpdateWithWhereUniqueWithoutGroupInput | Prisma.ExpenseUpdateWithWhereUniqueWithoutGroupInput[]
+  updateMany?: Prisma.ExpenseUpdateManyWithWhereWithoutGroupInput | Prisma.ExpenseUpdateManyWithWhereWithoutGroupInput[]
+  deleteMany?: Prisma.ExpenseScalarWhereInput | Prisma.ExpenseScalarWhereInput[]
+}
+
+export type ExpenseCreateNestedOneWithoutSplitsInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutSplitsInput, Prisma.ExpenseUncheckedCreateWithoutSplitsInput>
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutSplitsInput
+  connect?: Prisma.ExpenseWhereUniqueInput
+}
+
+export type ExpenseUpdateOneRequiredWithoutSplitsNestedInput = {
+  create?: Prisma.XOR<Prisma.ExpenseCreateWithoutSplitsInput, Prisma.ExpenseUncheckedCreateWithoutSplitsInput>
+  connectOrCreate?: Prisma.ExpenseCreateOrConnectWithoutSplitsInput
+  upsert?: Prisma.ExpenseUpsertWithoutSplitsInput
+  connect?: Prisma.ExpenseWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ExpenseUpdateToOneWithWhereWithoutSplitsInput, Prisma.ExpenseUpdateWithoutSplitsInput>, Prisma.ExpenseUncheckedUpdateWithoutSplitsInput>
+}
+
 export type ExpenseCreateWithoutUserInput = {
   date: Date | string
   description: string
@@ -672,10 +871,14 @@ export type ExpenseCreateWithoutUserInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   category: Prisma.CategoryCreateNestedOneWithoutExpensesInput
   installments?: Prisma.InstallmentCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitCreateNestedManyWithoutExpenseInput
+  recurringExpense?: Prisma.RecurringExpenseCreateNestedOneWithoutExpensesInput
+  group?: Prisma.GroupCreateNestedOneWithoutExpensesInput
 }
 
 export type ExpenseUncheckedCreateWithoutUserInput = {
@@ -687,10 +890,14 @@ export type ExpenseUncheckedCreateWithoutUserInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   categoryId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
   installments?: Prisma.InstallmentUncheckedCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitUncheckedCreateNestedManyWithoutExpenseInput
 }
 
 export type ExpenseCreateOrConnectWithoutUserInput = {
@@ -731,10 +938,13 @@ export type ExpenseScalarWhereInput = {
   isInstallment?: Prisma.BoolFilter<"Expense"> | boolean
   installmentCount?: Prisma.IntFilter<"Expense"> | number
   isShared?: Prisma.BoolFilter<"Expense"> | boolean
+  splitType?: Prisma.EnumSplitTypeFilter<"Expense"> | $Enums.SplitType
   createdAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Expense"> | Date | string
   userId?: Prisma.IntFilter<"Expense"> | number
   categoryId?: Prisma.IntFilter<"Expense"> | number
+  recurringExpenseId?: Prisma.IntNullableFilter<"Expense"> | number | null
+  groupId?: Prisma.IntNullableFilter<"Expense"> | number | null
 }
 
 export type ExpenseCreateWithoutCategoryInput = {
@@ -745,10 +955,14 @@ export type ExpenseCreateWithoutCategoryInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutExpensesInput
   installments?: Prisma.InstallmentCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitCreateNestedManyWithoutExpenseInput
+  recurringExpense?: Prisma.RecurringExpenseCreateNestedOneWithoutExpensesInput
+  group?: Prisma.GroupCreateNestedOneWithoutExpensesInput
 }
 
 export type ExpenseUncheckedCreateWithoutCategoryInput = {
@@ -760,10 +974,14 @@ export type ExpenseUncheckedCreateWithoutCategoryInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
   installments?: Prisma.InstallmentUncheckedCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitUncheckedCreateNestedManyWithoutExpenseInput
 }
 
 export type ExpenseCreateOrConnectWithoutCategoryInput = {
@@ -800,10 +1018,14 @@ export type ExpenseCreateWithoutInstallmentsInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutExpensesInput
   category: Prisma.CategoryCreateNestedOneWithoutExpensesInput
+  splits?: Prisma.ExpenseSplitCreateNestedManyWithoutExpenseInput
+  recurringExpense?: Prisma.RecurringExpenseCreateNestedOneWithoutExpensesInput
+  group?: Prisma.GroupCreateNestedOneWithoutExpensesInput
 }
 
 export type ExpenseUncheckedCreateWithoutInstallmentsInput = {
@@ -815,10 +1037,14 @@ export type ExpenseUncheckedCreateWithoutInstallmentsInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: number
   categoryId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
+  splits?: Prisma.ExpenseSplitUncheckedCreateNestedManyWithoutExpenseInput
 }
 
 export type ExpenseCreateOrConnectWithoutInstallmentsInput = {
@@ -845,10 +1071,14 @@ export type ExpenseUpdateWithoutInstallmentsInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutExpensesNestedInput
   category?: Prisma.CategoryUpdateOneRequiredWithoutExpensesNestedInput
+  splits?: Prisma.ExpenseSplitUpdateManyWithoutExpenseNestedInput
+  recurringExpense?: Prisma.RecurringExpenseUpdateOneWithoutExpensesNestedInput
+  group?: Prisma.GroupUpdateOneWithoutExpensesNestedInput
 }
 
 export type ExpenseUncheckedUpdateWithoutInstallmentsInput = {
@@ -860,10 +1090,230 @@ export type ExpenseUncheckedUpdateWithoutInstallmentsInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  splits?: Prisma.ExpenseSplitUncheckedUpdateManyWithoutExpenseNestedInput
+}
+
+export type ExpenseCreateWithoutRecurringExpenseInput = {
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutExpensesInput
+  category: Prisma.CategoryCreateNestedOneWithoutExpensesInput
+  installments?: Prisma.InstallmentCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitCreateNestedManyWithoutExpenseInput
+  group?: Prisma.GroupCreateNestedOneWithoutExpensesInput
+}
+
+export type ExpenseUncheckedCreateWithoutRecurringExpenseInput = {
+  id?: number
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: number
+  categoryId: number
+  groupId?: number | null
+  installments?: Prisma.InstallmentUncheckedCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitUncheckedCreateNestedManyWithoutExpenseInput
+}
+
+export type ExpenseCreateOrConnectWithoutRecurringExpenseInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpenseCreateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput>
+}
+
+export type ExpenseCreateManyRecurringExpenseInputEnvelope = {
+  data: Prisma.ExpenseCreateManyRecurringExpenseInput | Prisma.ExpenseCreateManyRecurringExpenseInput[]
+  skipDuplicates?: boolean
+}
+
+export type ExpenseUpsertWithWhereUniqueWithoutRecurringExpenseInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  update: Prisma.XOR<Prisma.ExpenseUpdateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedUpdateWithoutRecurringExpenseInput>
+  create: Prisma.XOR<Prisma.ExpenseCreateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedCreateWithoutRecurringExpenseInput>
+}
+
+export type ExpenseUpdateWithWhereUniqueWithoutRecurringExpenseInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  data: Prisma.XOR<Prisma.ExpenseUpdateWithoutRecurringExpenseInput, Prisma.ExpenseUncheckedUpdateWithoutRecurringExpenseInput>
+}
+
+export type ExpenseUpdateManyWithWhereWithoutRecurringExpenseInput = {
+  where: Prisma.ExpenseScalarWhereInput
+  data: Prisma.XOR<Prisma.ExpenseUpdateManyMutationInput, Prisma.ExpenseUncheckedUpdateManyWithoutRecurringExpenseInput>
+}
+
+export type ExpenseCreateWithoutGroupInput = {
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutExpensesInput
+  category: Prisma.CategoryCreateNestedOneWithoutExpensesInput
+  installments?: Prisma.InstallmentCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitCreateNestedManyWithoutExpenseInput
+  recurringExpense?: Prisma.RecurringExpenseCreateNestedOneWithoutExpensesInput
+}
+
+export type ExpenseUncheckedCreateWithoutGroupInput = {
+  id?: number
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: number
+  categoryId: number
+  recurringExpenseId?: number | null
+  installments?: Prisma.InstallmentUncheckedCreateNestedManyWithoutExpenseInput
+  splits?: Prisma.ExpenseSplitUncheckedCreateNestedManyWithoutExpenseInput
+}
+
+export type ExpenseCreateOrConnectWithoutGroupInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpenseCreateWithoutGroupInput, Prisma.ExpenseUncheckedCreateWithoutGroupInput>
+}
+
+export type ExpenseCreateManyGroupInputEnvelope = {
+  data: Prisma.ExpenseCreateManyGroupInput | Prisma.ExpenseCreateManyGroupInput[]
+  skipDuplicates?: boolean
+}
+
+export type ExpenseUpsertWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  update: Prisma.XOR<Prisma.ExpenseUpdateWithoutGroupInput, Prisma.ExpenseUncheckedUpdateWithoutGroupInput>
+  create: Prisma.XOR<Prisma.ExpenseCreateWithoutGroupInput, Prisma.ExpenseUncheckedCreateWithoutGroupInput>
+}
+
+export type ExpenseUpdateWithWhereUniqueWithoutGroupInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  data: Prisma.XOR<Prisma.ExpenseUpdateWithoutGroupInput, Prisma.ExpenseUncheckedUpdateWithoutGroupInput>
+}
+
+export type ExpenseUpdateManyWithWhereWithoutGroupInput = {
+  where: Prisma.ExpenseScalarWhereInput
+  data: Prisma.XOR<Prisma.ExpenseUpdateManyMutationInput, Prisma.ExpenseUncheckedUpdateManyWithoutGroupInput>
+}
+
+export type ExpenseCreateWithoutSplitsInput = {
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutExpensesInput
+  category: Prisma.CategoryCreateNestedOneWithoutExpensesInput
+  installments?: Prisma.InstallmentCreateNestedManyWithoutExpenseInput
+  recurringExpense?: Prisma.RecurringExpenseCreateNestedOneWithoutExpensesInput
+  group?: Prisma.GroupCreateNestedOneWithoutExpensesInput
+}
+
+export type ExpenseUncheckedCreateWithoutSplitsInput = {
+  id?: number
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: number
+  categoryId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
+  installments?: Prisma.InstallmentUncheckedCreateNestedManyWithoutExpenseInput
+}
+
+export type ExpenseCreateOrConnectWithoutSplitsInput = {
+  where: Prisma.ExpenseWhereUniqueInput
+  create: Prisma.XOR<Prisma.ExpenseCreateWithoutSplitsInput, Prisma.ExpenseUncheckedCreateWithoutSplitsInput>
+}
+
+export type ExpenseUpsertWithoutSplitsInput = {
+  update: Prisma.XOR<Prisma.ExpenseUpdateWithoutSplitsInput, Prisma.ExpenseUncheckedUpdateWithoutSplitsInput>
+  create: Prisma.XOR<Prisma.ExpenseCreateWithoutSplitsInput, Prisma.ExpenseUncheckedCreateWithoutSplitsInput>
+  where?: Prisma.ExpenseWhereInput
+}
+
+export type ExpenseUpdateToOneWithWhereWithoutSplitsInput = {
+  where?: Prisma.ExpenseWhereInput
+  data: Prisma.XOR<Prisma.ExpenseUpdateWithoutSplitsInput, Prisma.ExpenseUncheckedUpdateWithoutSplitsInput>
+}
+
+export type ExpenseUpdateWithoutSplitsInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutExpensesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutExpensesNestedInput
+  installments?: Prisma.InstallmentUpdateManyWithoutExpenseNestedInput
+  recurringExpense?: Prisma.RecurringExpenseUpdateOneWithoutExpensesNestedInput
+  group?: Prisma.GroupUpdateOneWithoutExpensesNestedInput
+}
+
+export type ExpenseUncheckedUpdateWithoutSplitsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  installments?: Prisma.InstallmentUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
 export type ExpenseCreateManyUserInput = {
@@ -875,9 +1325,12 @@ export type ExpenseCreateManyUserInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   categoryId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
 }
 
 export type ExpenseUpdateWithoutUserInput = {
@@ -888,10 +1341,14 @@ export type ExpenseUpdateWithoutUserInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   category?: Prisma.CategoryUpdateOneRequiredWithoutExpensesNestedInput
   installments?: Prisma.InstallmentUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUpdateManyWithoutExpenseNestedInput
+  recurringExpense?: Prisma.RecurringExpenseUpdateOneWithoutExpensesNestedInput
+  group?: Prisma.GroupUpdateOneWithoutExpensesNestedInput
 }
 
 export type ExpenseUncheckedUpdateWithoutUserInput = {
@@ -903,10 +1360,14 @@ export type ExpenseUncheckedUpdateWithoutUserInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   installments?: Prisma.InstallmentUncheckedUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
 export type ExpenseUncheckedUpdateManyWithoutUserInput = {
@@ -918,9 +1379,12 @@ export type ExpenseUncheckedUpdateManyWithoutUserInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type ExpenseCreateManyCategoryInput = {
@@ -932,9 +1396,12 @@ export type ExpenseCreateManyCategoryInput = {
   isInstallment?: boolean
   installmentCount?: number
   isShared?: boolean
+  splitType?: $Enums.SplitType
   createdAt?: Date | string
   updatedAt?: Date | string
   userId: number
+  recurringExpenseId?: number | null
+  groupId?: number | null
 }
 
 export type ExpenseUpdateWithoutCategoryInput = {
@@ -945,10 +1412,14 @@ export type ExpenseUpdateWithoutCategoryInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutExpensesNestedInput
   installments?: Prisma.InstallmentUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUpdateManyWithoutExpenseNestedInput
+  recurringExpense?: Prisma.RecurringExpenseUpdateOneWithoutExpensesNestedInput
+  group?: Prisma.GroupUpdateOneWithoutExpensesNestedInput
 }
 
 export type ExpenseUncheckedUpdateWithoutCategoryInput = {
@@ -960,10 +1431,14 @@ export type ExpenseUncheckedUpdateWithoutCategoryInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   installments?: Prisma.InstallmentUncheckedUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUncheckedUpdateManyWithoutExpenseNestedInput
 }
 
 export type ExpenseUncheckedUpdateManyWithoutCategoryInput = {
@@ -975,9 +1450,154 @@ export type ExpenseUncheckedUpdateManyWithoutCategoryInput = {
   isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
   installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
   isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type ExpenseCreateManyRecurringExpenseInput = {
+  id?: number
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: number
+  categoryId: number
+  groupId?: number | null
+}
+
+export type ExpenseUpdateWithoutRecurringExpenseInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutExpensesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutExpensesNestedInput
+  installments?: Prisma.InstallmentUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUpdateManyWithoutExpenseNestedInput
+  group?: Prisma.GroupUpdateOneWithoutExpensesNestedInput
+}
+
+export type ExpenseUncheckedUpdateWithoutRecurringExpenseInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  installments?: Prisma.InstallmentUncheckedUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUncheckedUpdateManyWithoutExpenseNestedInput
+}
+
+export type ExpenseUncheckedUpdateManyWithoutRecurringExpenseInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  groupId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type ExpenseCreateManyGroupInput = {
+  id?: number
+  date: Date | string
+  description: string
+  location?: string | null
+  totalAmount: runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: boolean
+  installmentCount?: number
+  isShared?: boolean
+  splitType?: $Enums.SplitType
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  userId: number
+  categoryId: number
+  recurringExpenseId?: number | null
+}
+
+export type ExpenseUpdateWithoutGroupInput = {
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutExpensesNestedInput
+  category?: Prisma.CategoryUpdateOneRequiredWithoutExpensesNestedInput
+  installments?: Prisma.InstallmentUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUpdateManyWithoutExpenseNestedInput
+  recurringExpense?: Prisma.RecurringExpenseUpdateOneWithoutExpensesNestedInput
+}
+
+export type ExpenseUncheckedUpdateWithoutGroupInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  installments?: Prisma.InstallmentUncheckedUpdateManyWithoutExpenseNestedInput
+  splits?: Prisma.ExpenseSplitUncheckedUpdateManyWithoutExpenseNestedInput
+}
+
+export type ExpenseUncheckedUpdateManyWithoutGroupInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  date?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  location?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  totalAmount?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  isInstallment?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  installmentCount?: Prisma.IntFieldUpdateOperationsInput | number
+  isShared?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  splitType?: Prisma.EnumSplitTypeFieldUpdateOperationsInput | $Enums.SplitType
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  categoryId?: Prisma.IntFieldUpdateOperationsInput | number
+  recurringExpenseId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -987,10 +1607,12 @@ export type ExpenseUncheckedUpdateManyWithoutCategoryInput = {
 
 export type ExpenseCountOutputType = {
   installments: number
+  splits: number
 }
 
 export type ExpenseCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   installments?: boolean | ExpenseCountOutputTypeCountInstallmentsArgs
+  splits?: boolean | ExpenseCountOutputTypeCountSplitsArgs
 }
 
 /**
@@ -1010,6 +1632,13 @@ export type ExpenseCountOutputTypeCountInstallmentsArgs<ExtArgs extends runtime.
   where?: Prisma.InstallmentWhereInput
 }
 
+/**
+ * ExpenseCountOutputType without action
+ */
+export type ExpenseCountOutputTypeCountSplitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ExpenseSplitWhereInput
+}
+
 
 export type ExpenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1020,13 +1649,19 @@ export type ExpenseSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   isInstallment?: boolean
   installmentCount?: boolean
   isShared?: boolean
+  splitType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
   categoryId?: boolean
+  recurringExpenseId?: boolean
+  groupId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   installments?: boolean | Prisma.Expense$installmentsArgs<ExtArgs>
+  splits?: boolean | Prisma.Expense$splitsArgs<ExtArgs>
+  recurringExpense?: boolean | Prisma.Expense$recurringExpenseArgs<ExtArgs>
+  group?: boolean | Prisma.Expense$groupArgs<ExtArgs>
   _count?: boolean | Prisma.ExpenseCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["expense"]>
 
@@ -1039,12 +1674,17 @@ export type ExpenseSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isInstallment?: boolean
   installmentCount?: boolean
   isShared?: boolean
+  splitType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
   categoryId?: boolean
+  recurringExpenseId?: boolean
+  groupId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  recurringExpense?: boolean | Prisma.Expense$recurringExpenseArgs<ExtArgs>
+  group?: boolean | Prisma.Expense$groupArgs<ExtArgs>
 }, ExtArgs["result"]["expense"]>
 
 export type ExpenseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1056,12 +1696,17 @@ export type ExpenseSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exten
   isInstallment?: boolean
   installmentCount?: boolean
   isShared?: boolean
+  splitType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
   categoryId?: boolean
+  recurringExpenseId?: boolean
+  groupId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  recurringExpense?: boolean | Prisma.Expense$recurringExpenseArgs<ExtArgs>
+  group?: boolean | Prisma.Expense$groupArgs<ExtArgs>
 }, ExtArgs["result"]["expense"]>
 
 export type ExpenseSelectScalar = {
@@ -1073,26 +1718,36 @@ export type ExpenseSelectScalar = {
   isInstallment?: boolean
   installmentCount?: boolean
   isShared?: boolean
+  splitType?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   userId?: boolean
   categoryId?: boolean
+  recurringExpenseId?: boolean
+  groupId?: boolean
 }
 
-export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "description" | "location" | "totalAmount" | "isInstallment" | "installmentCount" | "isShared" | "createdAt" | "updatedAt" | "userId" | "categoryId", ExtArgs["result"]["expense"]>
+export type ExpenseOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "date" | "description" | "location" | "totalAmount" | "isInstallment" | "installmentCount" | "isShared" | "splitType" | "createdAt" | "updatedAt" | "userId" | "categoryId" | "recurringExpenseId" | "groupId", ExtArgs["result"]["expense"]>
 export type ExpenseInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
   installments?: boolean | Prisma.Expense$installmentsArgs<ExtArgs>
+  splits?: boolean | Prisma.Expense$splitsArgs<ExtArgs>
+  recurringExpense?: boolean | Prisma.Expense$recurringExpenseArgs<ExtArgs>
+  group?: boolean | Prisma.Expense$groupArgs<ExtArgs>
   _count?: boolean | Prisma.ExpenseCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ExpenseIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  recurringExpense?: boolean | Prisma.Expense$recurringExpenseArgs<ExtArgs>
+  group?: boolean | Prisma.Expense$groupArgs<ExtArgs>
 }
 export type ExpenseIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
   category?: boolean | Prisma.CategoryDefaultArgs<ExtArgs>
+  recurringExpense?: boolean | Prisma.Expense$recurringExpenseArgs<ExtArgs>
+  group?: boolean | Prisma.Expense$groupArgs<ExtArgs>
 }
 
 export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1101,6 +1756,9 @@ export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     user: Prisma.$UserPayload<ExtArgs>
     category: Prisma.$CategoryPayload<ExtArgs>
     installments: Prisma.$InstallmentPayload<ExtArgs>[]
+    splits: Prisma.$ExpenseSplitPayload<ExtArgs>[]
+    recurringExpense: Prisma.$RecurringExpensePayload<ExtArgs> | null
+    group: Prisma.$GroupPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1111,10 +1769,13 @@ export type $ExpensePayload<ExtArgs extends runtime.Types.Extensions.InternalArg
     isInstallment: boolean
     installmentCount: number
     isShared: boolean
+    splitType: $Enums.SplitType
     createdAt: Date
     updatedAt: Date
     userId: number
     categoryId: number
+    recurringExpenseId: number | null
+    groupId: number | null
   }, ExtArgs["result"]["expense"]>
   composites: {}
 }
@@ -1512,6 +2173,9 @@ export interface Prisma__ExpenseClient<T, Null = never, ExtArgs extends runtime.
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   category<T extends Prisma.CategoryDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.CategoryDefaultArgs<ExtArgs>>): Prisma.Prisma__CategoryClient<runtime.Types.Result.GetResult<Prisma.$CategoryPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   installments<T extends Prisma.Expense$installmentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$installmentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$InstallmentPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  splits<T extends Prisma.Expense$splitsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$splitsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ExpenseSplitPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  recurringExpense<T extends Prisma.Expense$recurringExpenseArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$recurringExpenseArgs<ExtArgs>>): Prisma.Prisma__RecurringExpenseClient<runtime.Types.Result.GetResult<Prisma.$RecurringExpensePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  group<T extends Prisma.Expense$groupArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Expense$groupArgs<ExtArgs>>): Prisma.Prisma__GroupClient<runtime.Types.Result.GetResult<Prisma.$GroupPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1549,10 +2213,13 @@ export interface ExpenseFieldRefs {
   readonly isInstallment: Prisma.FieldRef<"Expense", 'Boolean'>
   readonly installmentCount: Prisma.FieldRef<"Expense", 'Int'>
   readonly isShared: Prisma.FieldRef<"Expense", 'Boolean'>
+  readonly splitType: Prisma.FieldRef<"Expense", 'SplitType'>
   readonly createdAt: Prisma.FieldRef<"Expense", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Expense", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Expense", 'Int'>
   readonly categoryId: Prisma.FieldRef<"Expense", 'Int'>
+  readonly recurringExpenseId: Prisma.FieldRef<"Expense", 'Int'>
+  readonly groupId: Prisma.FieldRef<"Expense", 'Int'>
 }
     
 
@@ -1970,6 +2637,68 @@ export type Expense$installmentsArgs<ExtArgs extends runtime.Types.Extensions.In
   take?: number
   skip?: number
   distinct?: Prisma.InstallmentScalarFieldEnum | Prisma.InstallmentScalarFieldEnum[]
+}
+
+/**
+ * Expense.splits
+ */
+export type Expense$splitsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ExpenseSplit
+   */
+  select?: Prisma.ExpenseSplitSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ExpenseSplit
+   */
+  omit?: Prisma.ExpenseSplitOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ExpenseSplitInclude<ExtArgs> | null
+  where?: Prisma.ExpenseSplitWhereInput
+  orderBy?: Prisma.ExpenseSplitOrderByWithRelationInput | Prisma.ExpenseSplitOrderByWithRelationInput[]
+  cursor?: Prisma.ExpenseSplitWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.ExpenseSplitScalarFieldEnum | Prisma.ExpenseSplitScalarFieldEnum[]
+}
+
+/**
+ * Expense.recurringExpense
+ */
+export type Expense$recurringExpenseArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the RecurringExpense
+   */
+  select?: Prisma.RecurringExpenseSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the RecurringExpense
+   */
+  omit?: Prisma.RecurringExpenseOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RecurringExpenseInclude<ExtArgs> | null
+  where?: Prisma.RecurringExpenseWhereInput
+}
+
+/**
+ * Expense.group
+ */
+export type Expense$groupArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Group
+   */
+  select?: Prisma.GroupSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Group
+   */
+  omit?: Prisma.GroupOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GroupInclude<ExtArgs> | null
+  where?: Prisma.GroupWhereInput
 }
 
 /**

@@ -11,14 +11,19 @@ export class CategoriesService {
         return this.prisma.category.create({
             data: {
                 name: createCategoryDto.name,
+                type: createCategoryDto.type,
                 userId: userId,
             },
         });
     }
 
-    findAll(userId: number) {
+    findAll(userId: number, type?: string) {
+        const where: any = { userId };
+        if (type) {
+            where.type = type;
+        }
         return this.prisma.category.findMany({
-            where: { userId },
+            where,
         });
     }
 

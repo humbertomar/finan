@@ -1,5 +1,5 @@
 import { Link, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Wallet, List, LogOut, X } from 'lucide-react';
+import { LayoutDashboard, Wallet, List, LogOut, X, DollarSign, CalendarClock, Settings, Users } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuthStore } from '@/auth/store';
 
@@ -15,8 +15,12 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
     const links = [
         { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
         { href: '/expenses', label: 'Despesas', icon: Wallet },
+        { href: '/incomes', label: 'Receitas', icon: DollarSign },
         { href: '/categories', label: 'Categorias', icon: List },
+        { href: '/recurring-expenses', label: 'Fixas', icon: CalendarClock },
+        { href: '/groups', label: 'Grupos', icon: Users },
         { href: '/proximo-mes', label: 'Próximo Mês', icon: Wallet },
+        { href: '/settings', label: 'Configurações', icon: Settings },
     ];
 
     const handleLinkClick = () => {

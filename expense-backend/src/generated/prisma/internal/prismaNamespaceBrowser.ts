@@ -54,7 +54,14 @@ export const ModelName = {
   User: 'User',
   Category: 'Category',
   Expense: 'Expense',
-  Installment: 'Installment'
+  Income: 'Income',
+  Installment: 'Installment',
+  RecurringExpense: 'RecurringExpense',
+  Group: 'Group',
+  GroupMember: 'GroupMember',
+  GroupInvite: 'GroupInvite',
+  ExpenseSplit: 'ExpenseSplit',
+  Settlement: 'Settlement'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -88,6 +95,7 @@ export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof User
 export const CategoryScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  type: 'type',
   userId: 'userId'
 } as const
 
@@ -103,13 +111,30 @@ export const ExpenseScalarFieldEnum = {
   isInstallment: 'isInstallment',
   installmentCount: 'installmentCount',
   isShared: 'isShared',
+  splitType: 'splitType',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  categoryId: 'categoryId',
+  recurringExpenseId: 'recurringExpenseId',
+  groupId: 'groupId'
+} as const
+
+export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+
+
+export const IncomeScalarFieldEnum = {
+  id: 'id',
+  date: 'date',
+  description: 'description',
+  amount: 'amount',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId',
   categoryId: 'categoryId'
 } as const
 
-export type ExpenseScalarFieldEnum = (typeof ExpenseScalarFieldEnum)[keyof typeof ExpenseScalarFieldEnum]
+export type IncomeScalarFieldEnum = (typeof IncomeScalarFieldEnum)[keyof typeof IncomeScalarFieldEnum]
 
 
 export const InstallmentScalarFieldEnum = {
@@ -124,6 +149,90 @@ export const InstallmentScalarFieldEnum = {
 } as const
 
 export type InstallmentScalarFieldEnum = (typeof InstallmentScalarFieldEnum)[keyof typeof InstallmentScalarFieldEnum]
+
+
+export const RecurringExpenseScalarFieldEnum = {
+  id: 'id',
+  description: 'description',
+  amount: 'amount',
+  frequency: 'frequency',
+  dayOfMonth: 'dayOfMonth',
+  active: 'active',
+  lastGenerated: 'lastGenerated',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt',
+  userId: 'userId',
+  categoryId: 'categoryId'
+} as const
+
+export type RecurringExpenseScalarFieldEnum = (typeof RecurringExpenseScalarFieldEnum)[keyof typeof RecurringExpenseScalarFieldEnum]
+
+
+export const GroupScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  ownerId: 'ownerId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type GroupScalarFieldEnum = (typeof GroupScalarFieldEnum)[keyof typeof GroupScalarFieldEnum]
+
+
+export const GroupMemberScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  userId: 'userId',
+  role: 'role',
+  joinedAt: 'joinedAt'
+} as const
+
+export type GroupMemberScalarFieldEnum = (typeof GroupMemberScalarFieldEnum)[keyof typeof GroupMemberScalarFieldEnum]
+
+
+export const GroupInviteScalarFieldEnum = {
+  id: 'id',
+  groupId: 'groupId',
+  inviterId: 'inviterId',
+  inviteeEmail: 'inviteeEmail',
+  token: 'token',
+  status: 'status',
+  expiresAt: 'expiresAt',
+  createdAt: 'createdAt'
+} as const
+
+export type GroupInviteScalarFieldEnum = (typeof GroupInviteScalarFieldEnum)[keyof typeof GroupInviteScalarFieldEnum]
+
+
+export const ExpenseSplitScalarFieldEnum = {
+  id: 'id',
+  expenseId: 'expenseId',
+  userId: 'userId',
+  amount: 'amount',
+  percentage: 'percentage',
+  confirmed: 'confirmed',
+  paidAt: 'paidAt',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ExpenseSplitScalarFieldEnum = (typeof ExpenseSplitScalarFieldEnum)[keyof typeof ExpenseSplitScalarFieldEnum]
+
+
+export const SettlementScalarFieldEnum = {
+  id: 'id',
+  fromUserId: 'fromUserId',
+  toUserId: 'toUserId',
+  amount: 'amount',
+  expenseSplitId: 'expenseSplitId',
+  status: 'status',
+  confirmedAt: 'confirmedAt',
+  notes: 'notes',
+  proofUrl: 'proofUrl',
+  createdAt: 'createdAt'
+} as const
+
+export type SettlementScalarFieldEnum = (typeof SettlementScalarFieldEnum)[keyof typeof SettlementScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -33,7 +33,42 @@ export type Category = Prisma.CategoryModel
  */
 export type Expense = Prisma.ExpenseModel
 /**
+ * Model Income
+ * 
+ */
+export type Income = Prisma.IncomeModel
+/**
  * Model Installment
  * 
  */
 export type Installment = Prisma.InstallmentModel
+/**
+ * Model RecurringExpense
+ * 
+ */
+export type RecurringExpense = Prisma.RecurringExpenseModel
+/**
+ * Model Group
+ * 
+ */
+export type Group = Prisma.GroupModel
+/**
+ * Model GroupMember
+ * 
+ */
+export type GroupMember = Prisma.GroupMemberModel
+/**
+ * Model GroupInvite
+ * 
+ */
+export type GroupInvite = Prisma.GroupInviteModel
+/**
+ * Model ExpenseSplit
+ * 
+ */
+export type ExpenseSplit = Prisma.ExpenseSplitModel
+/**
+ * Model Settlement
+ * 
+ */
+export type Settlement = Prisma.SettlementModel

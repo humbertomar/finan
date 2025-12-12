@@ -9,12 +9,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { getCategories } from '@/api/categories';
 import type { Category } from '@/api/categories';
+import { getGroups, type Group } from '@/api/groups';
 import { createExpense } from '@/api/expenses';
 import { Loader2 } from 'lucide-react';
 
 export function NewExpensePage() {
     const navigate = useNavigate();
     const [categories, setCategories] = useState<Category[]>([]);
+    const [groups, setGroups] = useState<Group[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
     const { register, handleSubmit, control, watch } = useForm<{
@@ -24,12 +26,14 @@ export function NewExpensePage() {
         location: string;
         categoryId: string;
         isShared: boolean;
+        groupId: string;
         isInstallment: boolean;
         installments: number;
     }>({
         defaultValues: {
             date: new Date().toISOString().split('T')[0],
             isShared: false,
+            groupId: '',
             isInstallment: false,
             installments: 1,
             categoryId: ''
@@ -37,13 +41,19 @@ export function NewExpensePage() {
     });
 
     const isInstallment = watch('isInstallment');
+    const isShared = watch('isShared');
 
     useEffect(() => {
         const loadCategories = async () => {
             const data = await getCategories();
             setCategories(data);
         }
+        const loadGroups = async () => {
+            const data = await getGroups();
+            setGroups(data);
+        }
         loadCategories();
+        loadGroups();
     }, []);
 
     const onSubmit = async (data: any) => {
@@ -56,6 +66,7 @@ export function NewExpensePage() {
                 location: data.location,
                 categoryId: Number(data.categoryId),
                 isShared: data.isShared,
+                groupId: data.isShared && data.groupId ? Number(data.groupId) : undefined,
                 isInstallment: data.isInstallment,
                 installmentCount: data.isInstallment ? Number(data.installments) : 1
             });
@@ -120,15 +131,46 @@ export function NewExpensePage() {
                             />
                         </div>
 
-                        <div className="flex items-center space-x-2">
-                            <Controller
-                                name="isShared"
-                                control={control}
-                                render={({ field }) => (
-                                    <Checkbox id="isShared" checked={field.value} onCheckedChange={field.onChange} />
-                                )}
-                            />
-                            <Label htmlFor="isShared">Despesa Compartilhada</Label>
+                        <div className="space-y-4 rounded-lg border p-4">
+                            <div className="flex items-center space-x-2">
+                                <Controller
+                                    name="isShared"
+                                    control={control}
+                                    render={({ field }) => (
+                                        <Checkbox id="isShared" checked={field.value} onCheckedChange={field.onChange} />
+                                    )}
+                                />
+                                <Label htmlFor="isShared">Compartilhar com grupo</Label>
+                            </div>
+
+                            {isShared && (
+                                <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
+                                    <Label htmlFor="group">Grupo</Label>
+                                    <Controller
+                                        name="groupId"
+                                        control={control}
+                                        render={({ field }) => (
+                                            <Select onValueChange={field.onChange} value={field.value?.toString()}>
+                                                <SelectTrigger className="bg-background">
+                                                    <SelectValue placeholder="Selecione um grupo" />
+                                                </SelectTrigger>
+                                                <SelectContent>
+                                                    {groups.map(group => (
+                                                        <SelectItem key={group.id} value={group.id.toString()}>
+                                                            {group.name}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        )}
+                                    />
+                                    {groups.length === 0 && (
+                                        <p className="text-sm text-muted-foreground">
+                                            Você não participa de nenhum grupo. <a href="/groups" className="underline">Criar grupo</a>
+                                        </p>
+                                    )}
+                                </div>
+                            )}
                         </div>
 
                         <div className="space-y-4 rounded-lg border p-4">

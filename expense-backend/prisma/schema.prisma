@@ -16,50 +16,202 @@ model User {
   updatedAt DateTime @updatedAt
 
   expenses         Expense[]
+  incomes          Income[]
   categories       Category[]
   paidInstallments Installment[]
+  recurringExpenses RecurringExpense[]
+  
+  ownedGroups      Group[]       @relation("OwnedGroups")
+  groupMemberships GroupMember[] @relation("GroupMemberships")
+  sentInvites      GroupInvite[] @relation("SentInvites")
+  expenseSplits    ExpenseSplit[]
+  settlementsFrom  Settlement[]  @relation("SettlementsFrom")
+  settlementsTo    Settlement[]  @relation("SettlementsTo")
+}
+
+enum CategoryType {
+  EXPENSE
+  INCOME
 }
 
 model Category {
-  id     Int    @id @default(autoincrement())
+  id     Int          @id @default(autoincrement())
   name   String
+  type   CategoryType @default(EXPENSE)
   userId Int
-  user   User   @relation(fields: [userId], references: [id])
+  user   User         @relation(fields: [userId], references: [id])
 
   expenses Expense[]
+  incomes  Income[]
+  recurringExpenses RecurringExpense[]
+}
+
+enum SplitType {
+  EQUAL
+  MANUAL
+  PERCENTAGE
 }
 
 model Expense {
-  id               Int           @id @default(autoincrement())
+  id               Int       @id @default(autoincrement())
   date             DateTime
   description      String
   location         String?
-  totalAmount      Decimal       @db.Decimal(10, 2)
-  isInstallment    Boolean       @default(false)
-  installmentCount Int           @default(1)
-  isShared         Boolean       @default(false)
-  createdAt        DateTime      @default(now())
-  updatedAt        DateTime      @updatedAt
-  
+  totalAmount      Decimal   @db.Decimal(10, 2)
+  isInstallment    Boolean   @default(false)
+  installmentCount Int       @default(1)
+  isShared         Boolean   @default(false)
+  splitType        SplitType @default(EQUAL)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
   userId     Int
   user       User     @relation(fields: [userId], references: [id])
   categoryId Int
   category   Category @relation(fields: [categoryId], references: [id])
 
   installments Installment[]
+  splits       ExpenseSplit[]
+
+  recurringExpenseId Int?
+  recurringExpense   RecurringExpense? @relation(fields: [recurringExpenseId], references: [id])
+  
+  groupId Int?
+  group   Group? @relation(fields: [groupId], references: [id], onDelete: SetNull)
+}
+
+model Income {
+  id          Int      @id @default(autoincrement())
+  date        DateTime
+  description String
+  amount      Decimal  @db.Decimal(10, 2)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
 }
 
 model Installment {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   number    Int
-  amount    Decimal  @db.Decimal(10, 2)
+  amount    Decimal   @db.Decimal(10, 2)
   date      DateTime // competence date
-  status    String   @default("OPEN") // OPEN, PAID
+  status    String    @default("OPEN") // OPEN, PAID
   paidAt    DateTime?
-  
+
   expenseId Int
   expense   Expense @relation(fields: [expenseId], references: [id], onDelete: Cascade)
-  
-  paidById  Int?
-  paidBy    User?   @relation(fields: [paidById], references: [id])
+
+  paidById Int?
+  paidBy   User? @relation(fields: [paidById], references: [id])
+}
+
+
+model RecurringExpense {
+  id            Int       @id @default(autoincrement())
+  description   String
+  amount        Decimal   @db.Decimal(10, 2)
+  frequency     String    @default("MONTHLY")
+  dayOfMonth    Int       @default(1)
+  active        Boolean   @default(true)
+  lastGenerated DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  userId     Int
+  user       User     @relation(fields: [userId], references: [id])
+  categoryId Int
+  category   Category @relation(fields: [categoryId], references: [id])
+  expenses   Expense[]
+}
+
+model Group {
+  id        Int      @id @default(autoincrement())
+  name      String
+  ownerId   Int
+  owner     User     @relation("OwnedGroups", fields: [ownerId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  members  GroupMember[]
+  invites  GroupInvite[]
+  expenses Expense[]
+}
+
+enum GroupRole {
+  OWNER
+  MEMBER
+}
+
+model GroupMember {
+  id       Int       @id @default(autoincrement())
+  groupId  Int
+  group    Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  userId   Int
+  user     User      @relation("GroupMemberships", fields: [userId], references: [id], onDelete: Cascade)
+  role     GroupRole @default(MEMBER)
+  joinedAt DateTime  @default(now())
+
+  @@unique([groupId, userId])
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model GroupInvite {
+  id           Int          @id @default(autoincrement())
+  groupId      Int
+  group        Group        @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  inviterId    Int
+  inviter      User         @relation("SentInvites", fields: [inviterId], references: [id], onDelete: Cascade)
+  inviteeEmail String
+  token        String       @unique
+  status       InviteStatus @default(PENDING)
+  expiresAt    DateTime
+  createdAt    DateTime     @default(now())
+}
+
+model ExpenseSplit {
+  id         Int       @id @default(autoincrement())
+  expenseId  Int
+  expense    Expense   @relation(fields: [expenseId], references: [id], onDelete: Cascade)
+  userId     Int
+  user       User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  amount     Decimal   @db.Decimal(10, 2)
+  percentage Decimal?  @db.Decimal(5, 2)
+  confirmed  Boolean   @default(false)
+  paidAt     DateTime?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  settlements Settlement[]
+
+  @@unique([expenseId, userId])
+}
+
+enum SettlementStatus {
+  PENDING
+  CONFIRMED
+}
+
+model Settlement {
+  id             Int              @id @default(autoincrement())
+  fromUserId     Int
+  fromUser       User             @relation("SettlementsFrom", fields: [fromUserId], references: [id], onDelete: Cascade)
+  toUserId       Int
+  toUser         User             @relation("SettlementsTo", fields: [toUserId], references: [id], onDelete: Cascade)
+  amount         Decimal          @db.Decimal(10, 2)
+  expenseSplitId Int?
+  expenseSplit   ExpenseSplit?    @relation(fields: [expenseSplitId], references: [id], onDelete: SetNull)
+  status         SettlementStatus @default(PENDING)
+  confirmedAt    DateTime?
+  notes          String?
+  proofUrl       String?
+  createdAt      DateTime         @default(now())
 }

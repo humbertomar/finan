@@ -9,7 +9,43 @@
 * 🟢 You can import this file directly.
 */
 
+export const CategoryType = {
+  EXPENSE: 'EXPENSE',
+  INCOME: 'INCOME'
+} as const
+
+export type CategoryType = (typeof CategoryType)[keyof typeof CategoryType]
 
 
-// This file is empty because there are no enums in the schema.
-export {}
+export const SplitType = {
+  EQUAL: 'EQUAL',
+  MANUAL: 'MANUAL',
+  PERCENTAGE: 'PERCENTAGE'
+} as const
+
+export type SplitType = (typeof SplitType)[keyof typeof SplitType]
+
+
+export const GroupRole = {
+  OWNER: 'OWNER',
+  MEMBER: 'MEMBER'
+} as const
+
+export type GroupRole = (typeof GroupRole)[keyof typeof GroupRole]
+
+
+export const InviteStatus = {
+  PENDING: 'PENDING',
+  ACCEPTED: 'ACCEPTED',
+  REJECTED: 'REJECTED'
+} as const
+
+export type InviteStatus = (typeof InviteStatus)[keyof typeof InviteStatus]
+
+
+export const SettlementStatus = {
+  PENDING: 'PENDING',
+  CONFIRMED: 'CONFIRMED'
+} as const
+
+export type SettlementStatus = (typeof SettlementStatus)[keyof typeof SettlementStatus]

@@ -1,22 +1,39 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { DollarSign, Wallet, TrendingUp, Eye } from 'lucide-react';
+import { DollarSign, Wallet, TrendingUp, Eye, Loader2 } from 'lucide-react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
-import { getDashboardSummary, type DashboardSummary } from '@/api/dashboard';
+import { getDashboardByDateRange, type DashboardSummary } from '@/api/dashboard';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Link } from 'react-router-dom';
 import { formatCurrency } from '@/utils/currency';
+import { PeriodFilter, type PeriodPreset, type DateRange } from '@/components/PeriodFilter';
+import { UpcomingExpensesAlert } from '@/components/UpcomingExpensesAlert';
+import { getGroups, type Group } from '@/api/groups';
+import { Users } from 'lucide-react';
 
 export function DashboardPage() {
     const [data, setData] = useState<DashboardSummary | null>(null);
+    const [groups, setGroups] = useState<Group[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedPeriod, setSelectedPeriod] = useState<PeriodPreset>('current');
+    const [dateRange, setDateRange] = useState<DateRange>(() => {
+        const today = new Date();
+        return {
+            startDate: new Date(today.getFullYear(), today.getMonth(), 1),
+            endDate: new Date(today.getFullYear(), today.getMonth() + 1, 0, 23, 59, 59, 999)
+        };
+    });
 
     useEffect(() => {
         const fetchDashboard = async () => {
+            setIsLoading(true);
             try {
-                const summary = await getDashboardSummary();
+                const summary = await getDashboardByDateRange(dateRange.startDate, dateRange.endDate);
                 setData(summary);
+
+                const userGroups = await getGroups();
+                setGroups(userGroups);
             } catch (error) {
                 console.error('Failed to fetch dashboard data', error);
             } finally {
@@ -25,12 +42,34 @@ export function DashboardPage() {
         };
 
         fetchDashboard();
-    }, []);
+    }, [dateRange]);
+
+    const handlePeriodChange = (preset: PeriodPreset, range: DateRange) => {
+        setSelectedPeriod(preset);
+        setDateRange(range);
+    };
+
+    const getPeriodLabel = (): string => {
+        switch (selectedPeriod) {
+            case 'current':
+                return 'do mês atual';
+            case 'last3':
+                return 'dos últimos 3 meses';
+            case 'last6':
+                return 'dos últimos 6 meses';
+            case 'year':
+                return 'do ano';
+            case 'custom':
+                return `de ${format(dateRange.startDate, 'dd/MM/yy')} a ${format(dateRange.endDate, 'dd/MM/yy')}`;
+            default:
+                return 'do período selecionado';
+        }
+    };
 
     if (isLoading) {
         return (
             <div className="flex h-full items-center justify-center">
-                Carregando dashboard...
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
             </div>
         );
     }
@@ -39,33 +78,49 @@ export function DashboardPage() {
 
     return (
         <div className="space-y-4 md:space-y-6">
-            {/* Cards superiores */}
-            <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Upcoming Expenses Alerts */}
+            <UpcomingExpensesAlert />
+
+            {/* Period Filter */}
+            <PeriodFilter onPeriodChange={handlePeriodChange} currentPreset={selectedPeriod} />
+            {/* Cards Top */}
+            <div className="grid gap-3 md:gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-5">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Despesas deste Mês</CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        <CardTitle className="text-sm font-medium">Receitas</CardTitle>
+                        <DollarSign className="h-4 w-4 text-green-600" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-xl md:text-2xl font-bold">
-                            {formatCurrency(data.currentMonthTotal)}
+                        <div className="text-xl md:text-2xl font-bold text-green-600">
+                            {formatCurrency(data.totalIncome)}
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                            Total de despesas cadastradas
-                        </p>
+                        <p className="text-xs text-muted-foreground">Entradas {getPeriodLabel()}</p>
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Parcelas deste Mês</CardTitle>
+                        <CardTitle className="text-sm font-medium">Despesas</CardTitle>
+                        <DollarSign className="h-4 w-4 text-red-600" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-xl md:text-2xl font-bold text-red-600">
+                            {formatCurrency(data.totalSpent)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Saídas {getPeriodLabel()}</p>
+                    </CardContent>
+                </Card>
+
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Saldo</CardTitle>
                         <Wallet className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
-                        <div className="text-xl md:text-2xl font-bold">
-                            {formatCurrency(data.currentMonthInstallments)}
+                        <div className={`text-xl md:text-2xl font-bold ${data.balance >= 0 ? 'text-blue-600' : 'text-red-600'}`}>
+                            {formatCurrency(data.balance)}
                         </div>
-                        <p className="text-xs text-muted-foreground">A pagar neste mês</p>
+                        <p className="text-xs text-muted-foreground">Balanço atual</p>
                     </CardContent>
                 </Card>
 
@@ -76,9 +131,9 @@ export function DashboardPage() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-xl md:text-2xl font-bold">
-                            {formatCurrency(data.nextMonthInstallments)}
+                            {formatCurrency(data.totalNextMonth)}
                         </div>
-                        <p className="text-xs text-muted-foreground">Parcelas comprometidas</p>
+                        <p className="text-xs text-muted-foreground">A pagar no próximo mês</p>
                     </CardContent>
                 </Card>
             </div>
@@ -109,7 +164,7 @@ export function DashboardPage() {
                                         {data.categoryDistribution.map((entry, index) => (
                                             <Cell
                                                 key={`cell-${index}`}
-                                                fill={entry.color}
+                                                fill={entry.color || '#8884d8'}
                                             />
                                         ))}
                                     </Pie>
